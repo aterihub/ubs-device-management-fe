@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: FMS FE Fronted CI/CD
+name: UBS DEVICE MANAGEMENT Fronted CI/CD
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: sigitnurmajid/fms-fe
+          images: sigitnurmajid/ubs-device-management-fe
       
       - name: Build and push Docker image
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
@@ -40,25 +40,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-  pull_the_registery:
-      needs: push_to_registry
-      name: Push Docker image to Server
-      runs-on: ubuntu-latest
-
-      steps:
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            sudo docker stop fms-fe
-            sudo docker rm fms-fe
-
-            sudo docker rmi sigitnurmajid/fms-fe:main
-            sudo docker pull sigitnurmajid/fms-fe:main
-
-            sudo docker run -t -d -p 8080:80 --name fms-fe sigitnurmajid/fms-fe:main
