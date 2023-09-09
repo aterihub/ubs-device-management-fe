@@ -8,6 +8,7 @@
 <sideNav :isDevicesActive="true" />
 <div class="content">
   <div class="device-container">
+    <h1 class="title font-bold mb-6">Devices Performace Dashboard</h1>
     <div class="flex flex-row lg:flex-col items-center mb-10 w-full">
       <form @submit.prevent="filterData" class="flex gap-4 items-center w-full justify-between">
         <div class="flex gap-4">
@@ -52,12 +53,13 @@
       </form>
       </div>
       <div class="mb-6 flex gap-10">
-        <h1 class="title"> Device: <span class="pl-2 font-semibold">{{ selectedDevice }} </span></h1>
-        <h1 class="title">Total Reboot: <span class="pl-2 font-semibold">{{ rebootCounter }}</span></h1>
+        <h1 class="title font-light"> Device: <span class="pl-2 font-semibold">{{ selectedDevice }} </span></h1>
+        <h1 class="title font-light">Total Reboot: <span class="pl-2 font-semibold">{{ rebootCounter }}</span></h1>
       </div>
       <div class="table-wrap">
         <div class="table-header">
-          <h1 class="title"> Data Density</h1>
+          <h1 class="title font-light"> Data Density</h1>
+          <h2 class="font-extralight mt-2"> Expected Data Density: <span class="font-semibold">700 Data</span></h2>
         </div>
         <SearchField class="outlined" v-model="dataDensitySearchValue" placeholder="Search by IMEI, variant, device name..."/>
         <EasyDataTable
@@ -176,15 +178,15 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
 }
 .title {
   @apply
-    text-[28px] font-thin flex justify-start items-center text-[#353535] opacity-80
+    text-[28px] flex justify-start items-center text-[#353535] opacity-80
 }
 .table-wrap {
   @apply
-    overflow-auto sm:overflow-visible
+    overflow-auto sm:overflow-visible bg-white p-10 rounded-2xl
 }
 .table-header {
   @apply
-  flex flex-row w-full justify-between mb-[16px]
+  flex flex-col w-full items-start mb-[16px]
 }
 /* .search-wrapper {
   @apply

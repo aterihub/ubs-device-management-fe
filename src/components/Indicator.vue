@@ -3,16 +3,38 @@
   :class="status? 'indicator-on' : 'indicator-off'">
   </div> -->
   <div class="relative flex h-3 w-3">
-    <span class="absolute inline-flex h-full w-full rounded-full opacity-75" :class="status? 'indicator-on' : 'indicator-off'"></span>
-    <span class="relative inline-flex rounded-full h-3 w-3" :class="status? 'status-on' : 'status-off'"></span>
+    <span class="absolute inline-flex h-full w-full rounded-full opacity-75" :class="getIndicatorClass(status)"></span>
+    <span class="relative inline-flex rounded-full h-3 w-3" :class="getStatusClass(status)"></span>
   </div> 
 </template>
 
 <script>
-  export default {
-    props:
-    [ 'status' ]
+export default {
+  props:
+  [ 'status' ],
+  methods: {
+    getIndicatorClass(status) {
+      if (status === 1) {
+        return 'indicator-on';
+      } else if (status === 0) {
+        return 'indicator-off';
+      } else if (status === -1) {
+        return 'indicator-error';
+      }
+      // You can add more conditions if needed
+    },
+    getStatusClass(status) {
+      if (status === 1) {
+        return 'status-on';
+      } else if (status === 0) {
+        return 'status-off';
+      } else if (status === -1) {
+        return 'status-error';
+      }
+      // You can add more conditions if needed
+    }
   }
+}
 </script>
 
 
@@ -29,10 +51,18 @@
   background:#C7C7C7;
   border: 1px solid #C7C7C7;
 }
+
+.indicator-error {
+  @apply animate-ping bg-red-500
+
+}
 .status-on {
   @apply bg-sky-500
 }
 .status-off {
   @apply bg-[#C7C7C7]
+}
+.status-error {
+  @apply bg-red-500
 }
 </style>
