@@ -8,27 +8,9 @@
 <sideNav :isDevicesActive="true" />
 <div class="content">
   <div class="device-container">
-    <div class="flex justify-between">
-      <h1 class="title"> Device: {{ selectedDevice }}</h1>
-      <form @submit.prevent="filterData" class="flex gap-4 items-center">
-        <select v-model="selectedFloor" class="select-option ">
-          <option value="0" selected>Select Floor</option>
-          <option v-for="item in floors" :key="item" :value="item">
-            <p class="font-semibold">{{ item }}</p>
-          </option>
-          </select>
-          <select v-model="selectedTray" class="select-option ">
-            <option value="0" selected>Select Tray</option>
-            <option v-for="item in trays" :key="item.id" :value="item">
-              <p class="font-semibold">{{ item }}</p>
-            </option>
-          </select>
-          <select v-model="selectedDevice" class="select-option ">
-            <option value="-" selected>Select Device</option>
-            <option v-for="item in devices" :key="item.id" :value="item">
-              <p class="font-semibold">{{ item }}</p>
-            </option>
-          </select>
+    <div class="flex flex-row lg:flex-col items-center mb-10 w-full">
+      <form @submit.prevent="filterData" class="flex gap-4 items-center w-full justify-between">
+        <div class="flex gap-4">
           <div class="text-left flex flex-col select-option ">
             <h2 class="font-semibold">From</h2>
             <div class="flex gap-6 ">
@@ -43,23 +25,48 @@
               <input class="cursor-pointer bg-transparent" type="time" step="3600" name="endTime" id="endTime" v-model="endTime">
             </div>
           </div>
+        </div>
+        <div class="flex gap-2">
+          <select v-model="selectedFloor" class="select-option ">
+            <option value="0" selected>Select Floor</option>
+            <option v-for="item in floors" :key="item" :value="item">
+              <p class="font-semibold">{{ item }}</p>
+          </option>
+          </select>
+          <select v-model="selectedTray" class="select-option ">
+            <option value="0" selected>Select Tray</option>
+            <option v-for="item in trays" :key="item.id" :value="item">
+              <p class="font-semibold">{{ item }}</p>
+            </option>
+          </select>
+          <select v-model="selectedDevice" class="select-option ">
+            <option value="-" selected>Select Device</option>
+            <option v-for="item in devices" :key="item.id" :value="item">
+              <p class="font-semibold">{{ item }}</p>
+            </option>
+          </select>
           <div class="w-28">
             <Button type="submit" class="filled__blue" label="Filter" :loading="loading" />
           </div>
-        </form>
+        </div>
+      </form>
+      </div>
+      <div class="mb-6 flex gap-10">
+        <h1 class="title"> Device: <span class="pl-2 font-semibold">{{ selectedDevice }} </span></h1>
+        <h1 class="title">Total Reboot: <span class="pl-2 font-semibold">{{ rebootCounter }}</span></h1>
       </div>
       <div class="table-wrap">
         <div class="table-header">
           <h1 class="title"> Data Density</h1>
         </div>
-        <SearchField class="outlined" v-model="searchValue" placeholder="Search by IMEI, variant, device name..."/>
+        <SearchField class="outlined" v-model="dataDensitySearchValue" placeholder="Search by IMEI, variant, device name..."/>
         <EasyDataTable
         table-class-name="customize-table"
         :loading="loading"
-        :headers="header"
+        :headers="dataDensityHeader"
         :items="dataDensity"
         theme-color="#1363df"        
-        :search-value="searchValue"
+        :search-value="dataDensitySearchValue"
         header-text-direction="center"
         body-text-direction="center"
         >
@@ -77,6 +84,8 @@ import { onMounted, ref, watch} from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDataStore } from '@/stores/DataStore'
 import { useMasterDataStore } from '@/stores/MasterDataStore'
+  
+  const loading = ref(false)
 
   //alert
   const modalActive = ref(false)
@@ -107,7 +116,7 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
   const masterDataStore = useMasterDataStore()
   const { floors, trays, devices } = storeToRefs(useMasterDataStore())
   const dataStore = useDataStore()
-  const { dataDensity } = storeToRefs(useDataStore())
+  const { dataDensity, rebootCounter } = storeToRefs(useDataStore())
 
   onMounted( async () => {
     await masterDataStore.getFloors()
@@ -115,23 +124,27 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
 
   
   async function filterData() {
-    if (selectedFloor.value != '0' && selectedTray.value != '0' && selectedDevice.value != '-') {
+    console.log()
+    if (selectedFloor.value != '0' && selectedTray.value != '0' && selectedDevice.value != '-' && startTime.value == '' && startTime.value == '') {
       let params = {
         device: selectedDevice.value,
         start: new Date(startDate.value + 'T' + startTime.value).toISOString(),
         stop: new Date(endDate.value + 'T' + endTime.value).toISOString()
       }
+      loading.value = true
       await dataStore.getDataDensity(params)
+      await dataStore.getRebootCounter(params)
+      loading.value = false
     } else {
-      alertMessage.value = 'Please select floor, tray and device first'
+      alertMessage.value = 'Please select time, floor, tray, device first'
       isError.value = true
       modalActive.value = true
       setTimeout(closeNotification, 3000)
     }
   }
 
-  const searchValue = ref('')
-  const header = [
+  const dataDensitySearchValue = ref('')
+  const dataDensityHeader = [
     { text: "Date time", value: "_time" },
     { text: "Power Mesin", value: "PowerMesin" ,sortable: true},
     { text: "Power Mesin Percentage", value: "PowerMesinPercentage" ,sortable: true},
@@ -145,11 +158,7 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
     { text: "Output Sensor Percentage", value: "OutputBarangPercentage", sortable: true },
   ]
 
-  const loading = ref(false)
-  const delay = require('delay')
-  const whileState = ref(true)
 
-  
 </script>
   
 <style scoped>
@@ -171,11 +180,11 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
 }
 .table-wrap {
   @apply
-    overflow-auto sm:overflow-visible mt-8
+    overflow-auto sm:overflow-visible
 }
 .table-header {
   @apply
-  flex flex-row w-full justify-between mb-[30px]
+  flex flex-row w-full justify-between mb-[16px]
 }
 /* .search-wrapper {
   @apply

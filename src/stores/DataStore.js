@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 
 export const useDataStore = defineStore('data', {
   state: () => ({
+    rebootCounter: ref('-'),
     dataDensity: ref([]),
     realtimeData: ref([]),
     offlineDevices: ref([]),
@@ -27,6 +28,7 @@ export const useDataStore = defineStore('data', {
         this.offlineDevices = this.realtimeData.filter(data => data.status == 'OFFLINE')
         if (this.offlineDevices.length != 0) {
           this.offlineDevices.map((data,index) => {
+            this.offlineDevices[index].message = 'MQTT not connected'
             this.offlineDevices[index].uptime = data.uptime/60
           })
         }
@@ -83,7 +85,11 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getRebootCounter(params)
-        console.log(res)
+        console.log(res.data.data)
+        this.rebootCounter = []
+        res.data.data.map((data) => {
+          this.rebootCounter = data._value
+        })
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message

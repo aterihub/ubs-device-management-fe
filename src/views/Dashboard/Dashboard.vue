@@ -26,7 +26,7 @@
           </select>
           <BaseButton type="submit" class="filled__blue" label="Filter" :loading="loading" />
         </form>
-        <h1>Last Update: {{ lastUpdate }}</h1>
+        <h1>Last Update: <span class="pl-2 font-semibold">{{ lastUpdate }}</span></h1>
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-4 w-full gap-10">
         <div class="card border border-[#57C09B] col-span-3" >
@@ -130,7 +130,7 @@ import sideNav from '@/components/navigation/sideNav.vue'
 import BaseButton from '@/components/button/BaseButton.vue'
 import { useMasterDataStore } from '@/stores/MasterDataStore'
 import { useDataStore } from '@/stores/DataStore'
-import lazyCard from '@/components/loading/lazyCard.vue';
+import lazyCard from '@/components/loading/lazyCard.vue'
 
 //dropdown filter
 const selectedFloor = ref('0')
