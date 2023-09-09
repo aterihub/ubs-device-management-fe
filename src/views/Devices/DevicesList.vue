@@ -125,7 +125,7 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
   
   async function filterData() {
     console.log()
-    if (selectedFloor.value != '0' && selectedTray.value != '0' && selectedDevice.value != '-' && startTime.value == '' && startTime.value == '') {
+    if (selectedFloor.value != '0' && selectedTray.value != '0' && selectedDevice.value != '-' && startTime.value != '' && startTime.value != '') {
       let params = {
         device: selectedDevice.value,
         start: new Date(startDate.value + 'T' + startTime.value).toISOString(),
