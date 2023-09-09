@@ -223,9 +223,7 @@ async function getRealtimeData() {
 //table
 const offlineTableHeader = [
     { text: "Machine Name", value: "machine_name" },
-    { text: "Machine Type", value: "machine_type" ,sortable: true},
     { text: "Error Description", value: "message", sortable: true },
-    { text: "Uptime (min)", value: "uptime", sortable: true },
     { text: "Last Heard", value: "lastHeard", sortable: true },
   ]
 const onlineTableHeader = [
