@@ -1,0 +1,5 @@
+Use GetDropFile Component in your Page
+
+GetDropFile emmiting @dropedFile and @selectedFile to get the Files
+
+see example
