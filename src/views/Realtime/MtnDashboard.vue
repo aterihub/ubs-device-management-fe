@@ -19,7 +19,7 @@
             </option>
           </select>
           <select v-model="selectedTray" class="select-option col-span-2">
-            <option value="0" selected>Select Tray</option>
+            <option :value=null selected>All Tray</option>
             <option v-for="item in trays" :key="item" :value="item">
               <p class="font-semibold">{{ item }}</p>
             </option>
@@ -118,6 +118,11 @@
       <div class="table-wrap">
         <div class="table-header">
           <h1 class="title"> Devices Actual Check</h1>
+          <div class="text-left">
+            <p>notes : </p>
+            <p>- ceklis mesin yang tidak sesuai dengan aktual di lapangan</p>
+            <p>- refresh rate 30 detik</p>
+          </div>
         </div>
         <SearchField class="outlined" v-model="offlineTableSearchValue" placeholder="Search by IMEI, variant, device name..."/>
         <EasyDataTable
@@ -136,7 +141,7 @@
       	:data   = "devicesSelected"
       	:name    = "fileName">
         <div class="button-wrapper">
-            <BaseButton label="Export CSV" class="filled__blue" />
+          <BaseButton label="Export CSV" class="filled__blue" @click="exportCSV" />
         </div>
       </download-csv>
       </div>
@@ -158,9 +163,9 @@ import lazyCard from '@/components/loading/lazyCard.vue'
 import { useLocalStorage } from "@vueuse/core"
 
 const devicesSelected = useLocalStorage('devicesSelected',[])
-watch(() => devicesSelected.value, async() => {
-  console.log(localStorage.getItem('devicesSelected'))
-})
+// watch(() => devicesSelected.value, async() => {
+//   console.log(localStorage.getItem('devicesSelected'))
+// })
 
 //dropdown filter
 const selectedFloor = useLocalStorage('selectedFloor','0')
@@ -174,14 +179,19 @@ const fileName = ref(new Date(Date.now()).toLocaleString() + '_' + selectedTray.
 watch(() => selectedFloor.value, async() => {
   let params = { floor: selectedFloor.value }
   await masterDataStore.getTrays(params)
-  selectedTray.value = trays.value[0]
 })
 
 //watch selected tray to get device
 watch(() => selectedTray.value, async() => {
-  masterDataParams.value.tray = selectedTray.value
-  realtimeDataParams.value.tray = selectedTray.value
-  await masterDataStore.getDevices(masterDataParams.value)
+  if (selectedTray.value == null) {
+    delete masterDataParams.value.tray
+    delete realtimeDataParams.value.tray
+    await masterDataStore.getDevices(masterDataParams.value)
+  } else {
+    masterDataParams.value.tray = selectedTray.value
+    realtimeDataParams.value.tray = selectedTray.value
+    await masterDataStore.getDevices(masterDataParams.value)
+  }
 })
 
 //stores
@@ -227,6 +237,10 @@ const lastUpdate = ref('-')
 onBeforeMount( async () => {
   await masterDataStore.getFloors()
   selectedFloor.value = floors.value[0]
+  let params = { floor: selectedFloor.value }
+  selectedTray.value = null
+  await masterDataStore.getTrays(params)
+  masterDataParams.value.tray = selectedTray.value
   while (whileState.value) {
     masterDataParams.value.tray = selectedTray.value
     realtimeDataParams.value.floor = selectedFloor.value
@@ -237,7 +251,8 @@ onBeforeMount( async () => {
 })
 
 onMounted(async () => {
-  await masterDataStore.getDevices(masterDataParams.value)
+  await masterDataStore.getDevices({floor: selectedFloor.value})
+
 })
 
 onUnmounted(() => {
@@ -281,9 +296,21 @@ const onlineTableHeader = [
 ]
   
 const devicesTableHeader = [
-  { text: "Machine Name", value: "name" },
+  { text: "Machine Name", value: "machine_name" },
 ]
   
+async function exportCSV() {
+    console.log(devicesSelected.value)
+  if (devicesSelected.value.length == 0) {
+    alertMessage.value = 'Check the device first'
+    isError.value = true
+    modalActive.value = true
+    setTimeout(closeNotification, 3000)
+  } else {
+    await delay(2000)
+    devicesSelected.value = []
+  }
+}
 
 // async function filterRealtimeData() {
 //   if (selectedFloor.value != '0' && selectedTray.value !='0') {
@@ -313,7 +340,7 @@ const devicesTableHeader = [
 }
 .table-header {
   @apply
-  flex flex-row w-full justify-between mb-[20px]
+  flex flex-row w-full justify-between items-start mb-[20px]
 }
 
 .operation {

@@ -41,8 +41,8 @@
           </select>
           <select v-model="selectedDevice" class="select-option ">
             <option value="-" selected>Select Device</option>
-            <option v-for="item in devices" :key="item.id" :value="item">
-              <p class="font-semibold">{{ item }}</p>
+            <option v-for="item in devices" :key="item.id" :value="item.machine_name">
+              <p class="font-semibold">{{ item.machine_name }}</p>
             </option>
           </select>
           <div class="w-28">
@@ -50,18 +50,32 @@
           </div>
         </div>
       </form>
-      </div>
-      <div class="mb-6 flex gap-10">
-        <h1 class="title font-light"> Device: <span class="pl-2 font-semibold">{{ selectedDevice }} </span></h1>
-        <h1 class="title font-light">Total Reboot: <span class="pl-2 font-semibold">{{ rebootCounter }}</span></h1>
-      </div>
-      <div class="table-wrap">
+    </div>
+    <div class="table-wrap">
         <div class="table-header">
-          <h1 class="title font-light"> Data Density</h1>
-          <h2 class="font-extralight mt-2"> Expected Data Density: <span class="font-semibold">720 Data</span></h2>
+          <h1 class="title font-light">Reboot Counter</h1>
+          <h2 class="font-extralight mt-2"> Total Reboot: <span class="pl-2 font-semibold">{{ rebootCounter }}</span></h2>
         </div>
-        <SearchField class="outlined" v-model="dataDensitySearchValue" placeholder="Search by IMEI, variant, device name..."/>
+        <SearchField class="outlined" v-model="rebootDetailSearchValue" placeholder="Search by IMEI, variant, device name..."/>
         <EasyDataTable
+          table-class-name="customize-table"
+          :loading="loading"
+          :headers="rebootDetailHeader"
+          :items="rebootDetail"
+          theme-color="#1363df"        
+          :search-value="rebootDetailSearchValue"
+          header-text-direction="center"
+          body-text-direction="center"
+          >
+        </EasyDataTable>
+    </div>
+    <div class="table-wrap">
+      <div class="table-header">
+        <h1 class="title font-light"> Data Density</h1>
+        <h2 class="font-extralight mt-2"> Expected Data Density: <span class="font-semibold">720 Data</span></h2>
+      </div>
+      <SearchField class="outlined" v-model="dataDensitySearchValue" placeholder="Search by IMEI, variant, device name..."/>
+      <EasyDataTable
         table-class-name="customize-table"
         :loading="loading"
         :headers="dataDensityHeader"
@@ -117,7 +131,7 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
   const masterDataStore = useMasterDataStore()
   const { floors, trays, devices } = storeToRefs(useMasterDataStore())
   const dataStore = useDataStore()
-  const { dataDensity, rebootCounter } = storeToRefs(useDataStore())
+  const { dataDensity, rebootCounter, rebootDetail } = storeToRefs(useDataStore())
 
   onMounted( async () => {
     await masterDataStore.getFloors()
@@ -145,6 +159,7 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
   }
 
   const dataDensitySearchValue = ref('')
+  const rebootDetailSearchValue = ref('')
   const dataDensityHeader = [
     { text: "Date time", value: "_time" },
     { text: "Power Mesin", value: "PowerMesin" ,sortable: true},
@@ -157,6 +172,11 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
     { text: "Input Sensor Percentage", value: "InputBarangPercentage", sortable: true },
     { text: "Output Sensor", value: "OutputBarang", sortable: true },
     { text: "Output Sensor Percentage", value: "OutputBarangPercentage", sortable: true },
+  ]
+  const rebootDetailHeader = [
+    { text: "Date time", value: "_time" },
+    { text: "State", value: "state" ,sortable: true},
+    { text: "Detail", value: "detail" ,sortable: true},
   ]
 
 

@@ -18,13 +18,9 @@
               <p class="font-semibold">{{ item }}</p>
             </option>
           </select>
-          <select v-model="selectedTray" class="select-option col-span-2">
-            <option value="0" selected>Select Tray</option>
-            <option v-for="item in trays" :key="item" :value="item">
-              <p class="font-semibold">{{ item }}</p>
-            </option>
+          <select v-model="selectedAirioTray" class="select-option col-span-2">
+            <option value="TrayG" selected>Tray G</option>
           </select>
-          <!-- <BaseButton type="submit" class="filled__blue" label="Filter" :loading="loading" /> -->
         </form>
         <h1>Last Update: <span class="pl-2 font-semibold">{{ lastUpdate }}</span></h1>
       </div>
@@ -71,13 +67,11 @@
         table-class-name="customize-table"
         :loading="loading"
         :headers="offlineTableHeader"
-        :items="offlineDevicesReport"
+        :items="offlineDevices"
         theme-color="#1363df"        
         :search-value="offlineTableSearchValue"
         header-text-direction="center"
         body-text-direction="center"
-        v-model:items-selected="offlineItemsSelected"
-        fixed-checkbox
         >
         </EasyDataTable>
       </div>
@@ -95,8 +89,6 @@
         :search-value="onlineTableSearchValue"
         header-text-direction="center"
         body-text-direction="center"
-        v-model:items-selected="onlineItemsSelected"
-        fixed-checkbox
         >
           <template #item-PowerMesin="item">
             <div class="w-full flex justify-center">
@@ -120,6 +112,31 @@
           </template>
         </EasyDataTable>
       </div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <h1 class="title"> Devices Actual Check</h1>
+        </div>
+        <SearchField class="outlined" v-model="offlineTableSearchValue" placeholder="Search by IMEI, variant, device name..."/>
+        <EasyDataTable
+        table-class-name="customize-table"
+        :loading="loading"
+        :headers="devicesTableHeader"
+        :items="devices"
+        theme-color="#1363df"        
+        :search-value="offlineTableSearchValue"
+        v-model:items-selected="devicesSelected"
+        fixed-checkbox
+        >
+        </EasyDataTable>
+        <download-csv
+      	class   = "btn btn-default mt-6 justify-end flex"
+      	:data   = "devicesSelected"
+      	:name    = "fileName">
+        <div class="button-wrapper">
+          <BaseButton label="Export CSV" class="filled__blue" @click="exportCSV" />
+        </div>
+      </download-csv>
+      </div>
     </div>
   </div> 
 </template>
@@ -128,45 +145,45 @@
 
 import SearchField from '@/components/SearchField.vue'
 import Indicator from '@/components/Indicator.vue'
+import BaseButton from '@/components/button/BaseButton.vue'
 import { storeToRefs } from 'pinia'
 import { ref, onUnmounted, onMounted, watch, watchEffect, onBeforeMount } from 'vue';
 import sideNav from '@/components/navigation/sideNav.vue'
-import BaseButton from '@/components/button/BaseButton.vue'
 import { useMasterDataStore } from '@/stores/MasterDataStore'
 import { useDataStore } from '@/stores/DataStore'
 import lazyCard from '@/components/loading/lazyCard.vue'
 import { useLocalStorage } from "@vueuse/core"
 
-const header = [
-  { text: "Machine Name", value: "nama" },
-  { text: "Error Description", value: "alamat", sortable: true },
-]
-
-const databro = [
-  {nama: 'ivan', alamat: '2owowowo'}
-]
-const offlineItemsSelected = useLocalStorage('offlineItemsSelected',[])
-const onlineItemsSelected = useLocalStorage('onlineItemsSelected',[])
-
-watch(() => offlineItemsSelected.value, async() => {
-  console.log(offlineItemsSelected.value)
+const devicesSelected = useLocalStorage('devicesSelected',[])
+watch(() => devicesSelected.value, async() => {
+  console.log(devicesSelected.value)
 })
 
 //dropdown filter
 const selectedFloor = useLocalStorage('selectedFloor','0')
-const selectedTray = useLocalStorage('selectedTray','0')
+const selectedAirioTray = useLocalStorage('selectedAirioTray','TrayG')
 const offlineTableSearchValue = ref('')
 const onlineTableSearchValue = ref('')
 
-watch(() => selectedFloor.value, async() => {
-  let params = { floor: selectedFloor.value }
-  await masterDataStore.getTrays(params)
-  selectedTray.value = trays.value[0]
-})
+const fileName = ref(new Date(Date.now()).toLocaleString() + '_' + selectedAirioTray.value.toString() + '_.csv')
+
+//watch selected floor to get tray
+// watch(() => selectedFloor.value, async() => {
+//   let params = { floor: selectedFloor.value }
+//   await masterDataStore.getAirio1(params)
+//   selectedAirioTray.value = 1.value[0]
+// })
+
+// //watch selected tray to get device
+// watch(() => selectedAirioTray.value, async() => {
+//   masterDataParams.value.tray = selectedAirioTray.value
+//   realtimeDataParams.value.tray = selectedAirioTray.value
+//   await masterDataStore.getAirioDevices(masterDataParams.value)
+// })
 
 //stores
 const masterDataStore = useMasterDataStore()
-const { floors, trays } = storeToRefs(useMasterDataStore())
+const { floors, trays, devices } = storeToRefs(useMasterDataStore())
 const dataStore = useDataStore()
 const { offlineDevices, onlineDevices } = storeToRefs(useDataStore())
 const loading = ref(false)
@@ -179,13 +196,16 @@ const closeNotification = () => {
   modalActive.value = false
 }
 
-//realtime data
-
+//query params
 const realtimeDataParams = ref({
   floor: selectedFloor.value,
-  tray: selectedTray.value
+  tray: selectedAirioTray.value
+})
+const masterDataParams = ref({
+  tray: selectedAirioTray.value
 })
 
+//realtime data variable
 const realtimeDevicesStatus = ref({
   normal: '-',
   off: '-',
@@ -197,87 +217,100 @@ const realtimeDevicesStatus = ref({
   offline: '-',
   total: '-'
 })
-
 const lastUpdate = ref('-')
-const offlineDevicesReport = ref([])
 
 
 //lifecycles
 onBeforeMount( async () => {
-  await masterDataStore.getFloors()
+  await masterDataStore.getAirioFloors()
   selectedFloor.value = floors.value[0]
   while (whileState.value) {
+    masterDataParams.value.tray = selectedAirioTray.value
     realtimeDataParams.value.floor = selectedFloor.value
-    realtimeDataParams.value.tray = selectedTray.value
+    realtimeDataParams.value.tray = selectedAirioTray.value
     await getRealtimeData()
     await delay(3000)
   }
 })
 
-
-watch(() => selectedTray.value, async() => {
-  realtimeDataParams.value.tray = selectedTray.value
-})
-
-onMounted(() => {
-  offlineDevicesReport.value = offlineDevices.value
-  console.log(offlineDevicesReport.value)
+onMounted(async () => {
+  await masterDataStore.getAirioDevices(masterDataParams.value)
 })
 
 onUnmounted(() => {
   whileState.value = false
 })
 
-
+//watch realtimeDeviceStatus to update Last Update data
 watch(() => dataStore.realtimeDevicesStatus, () => {
   if (dataStore.realtimeData != undefined) {
-    lastUpdate.value = new Date (dataStore.realtimeData[0]._time).toLocaleString()
+    lastUpdate.value = dataStore.realtimeData[0] == undefined ? '-' :  new Date (dataStore.realtimeData[0]._time).toLocaleString()
   }
   realtimeDevicesStatus.value = dataStore.realtimeDevicesStatus
 })
 
+
 const delay = require('delay')
 const whileState = ref(true)
 
-async function filterRealtimeData() {
-  if (selectedFloor.value != '0' && selectedTray.value !='0') {
-    realtimeDataParams.value.floor = selectedFloor.value
-    realtimeDataParams.value.tray = selectedTray.value
-    loading.value = true
-    await getRealtimeData()
-    loading.value = false
-  } else {
-    alertMessage.value = 'Please select floor and tray first'
+//fetch realtime data function
+async function getRealtimeData() {
+  await dataStore.getAirioRealtimeData(realtimeDataParams.value)
+}
+
+//table header
+const offlineTableHeader = [
+  { text: "Machine Name", value: "machine_name" },
+  { text: "Device ID", value: "device_id" },
+  { text: "Error Description", value: "message"},
+  { text: "Last Heard", value: "last_heard", sortable: true },
+]
+const onlineTableHeader = [
+  { text: "Machine Name", value: "machine_name" },
+  { text: "Device ID", value: "device_id" },
+  { text: "Machine Type", value: "machine_type" ,sortable: true},
+  { text: "Error Description", value: "message", sortable: true },
+  // { text: "Machine Power", value: "PowerMesin", sortable: true},
+  { text: "Machine Running", value: "RunMesin", sortable: true },
+  { text: "RPM", value: "RPM", sortable: true },
+  { text: "Input Sensor", value: "InputBarang", sortable: true },
+  { text: "Output Sensor", value: "OutputBarang", sortable: true },
+  { text: "Uptime (min)", value: "uptime", sortable: true },
+  { text: "Last Heard", value: "lastHeard", sortable: true },
+]
+  
+const devicesTableHeader = [
+  { text: "Machine Name", value: "machine_name" },
+  { text: "Device ID", value: "device_id" },
+]
+    
+async function exportCSV() {
+    console.log(devicesSelected.value)
+  if (devicesSelected.value.length == 0) {
+    alertMessage.value = 'Check the device first'
     isError.value = true
     modalActive.value = true
     setTimeout(closeNotification, 3000)
+  } else {
+    await delay(2000)
+    devicesSelected.value = []
   }
 }
 
-async function getRealtimeData() {
-  await dataStore.getRealtimeData(realtimeDataParams.value)
-}
-
-//table
-const offlineTableHeader = [
-    { text: "Machine Name", value: "machine_name" },
-    { text: "Error Description", value: "message", sortable: true },
-    { text: "Last Heard", value: "lastHeard", sortable: true },
-    { text: "Not Match", value: "notMatch", sortable: true },
-  ]
-const onlineTableHeader = [
-    { text: "Machine Name", value: "machine_name" },
-    { text: "Machine Type", value: "machine_type" ,sortable: true},
-    { text: "Error Description", value: "message", sortable: true },
-    { text: "Machine Power", value: "PowerMesin", sortable: true},
-    { text: "Machine Running", value: "RunMesin", sortable: true },
-    { text: "RPM", value: "RPM", sortable: true },
-    { text: "Input Sensor", value: "InputBarang", sortable: true },
-    { text: "Output Sensor", value: "OutputBarang", sortable: true },
-    { text: "Uptime (min)", value: "uptime", sortable: true },
-    { text: "Last Heard", value: "lastHeard", sortable: true },
-  ]
-
+// async function filterRealtimeData() {
+//   if (selectedFloor.value != '0' && selectedAirioTray.value !='0') {
+//     realtimeDataParams.value.floor = selectedFloor.value
+//     realtimeDataParams.value.tray = selectedAirioTray.value
+//     loading.value = true
+//     await getRealtimeData()
+//     loading.value = false
+//   } else {
+//     alertMessage.value = 'Please select floor and tray first'
+//     isError.value = true
+//     modalActive.value = true
+//     setTimeout(closeNotification, 3000)
+//   }
+// }
 </script>
   
 <style scoped>
