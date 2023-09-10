@@ -115,6 +115,7 @@
           </template>
         </EasyDataTable>
       </div>
+      
       <div class="table-wrap">
         <div class="table-header">
           <h1 class="title"> Devices Actual Check</h1>
@@ -126,24 +127,53 @@
         </div>
         <SearchField class="outlined" v-model="offlineTableSearchValue" placeholder="Search by IMEI, variant, device name..."/>
         <EasyDataTable
-        table-class-name="customize-table"
-        :loading="loading"
-        :headers="devicesTableHeader"
-        :items="devices"
-        theme-color="#1363df"        
-        :search-value="offlineTableSearchValue"
-        v-model:items-selected="devicesSelected"
-        fixed-checkbox
-        >
+          table-class-name="customize-table"
+          :loading="loading"
+          :headers="devicesTableHeader"
+          :items="devicesSelected"
+          theme-color="#1363df"        
+          :search-value="offlineTableSearchValue"
+          show-index
+          >
+          <template #item-RunMachine="item">
+            <div class="operation">
+              <p>{{ item.RunMachine == true  ? 'match' : 'not match' }}</p>
+              <input type="checkbox" v-model="item.RunMachine" value="RunMachine"  @change=updateDevicesSelected(item)>
+            </div>
+          </template>
+          <template #item-PowerMachine="item">
+            <div class="operation">
+              <p>{{ item.PowerMachine == true  ? 'match' : 'not match' }}</p>
+              <input type="checkbox" v-model="item.PowerMachine" value="PowerMachine"  @change=updateDevicesSelected(item)>
+            </div>
+          </template>
+          <template #item-RPM="item">
+            <div class="operation">
+              <p>{{ item.RPM == true  ? 'match' : 'not match' }}</p>
+              <input type="checkbox" v-model="item.RPM" value="RPM"  @change=updateDevicesSelected(item)>
+            </div>
+          </template>
+          <template #item-InputBarang="item">
+            <div class="operation">
+              <p>{{ item.InputBarang == true  ? 'match' : 'not match' }}</p>
+              <input type="checkbox" v-model="item.InputBarang" value="InputBarang"  @change=updateDevicesSelected(item)>
+            </div>
+          </template>
+          <template #item-OutputBarang="item">
+            <div class="operation">
+              <p>{{ item.OutputBarang == true  ? 'match' : 'not match' }}</p>
+              <input type="checkbox" v-model="item.OutputBarang" value="OutputBarang"  @change=updateDevicesSelected(item)>
+            </div>
+          </template>
         </EasyDataTable>
         <download-csv
-      	class   = "btn btn-default mt-6 justify-end flex"
-      	:data   = "devicesSelected"
-      	:name    = "fileName">
-        <div class="button-wrapper">
-          <BaseButton label="Export CSV" class="filled__blue" @click="exportCSV" />
-        </div>
-      </download-csv>
+        	class   = "btn btn-default mt-6 justify-end flex"
+        	:data   = "devicesSelected"
+        	:name    = "fileName">
+          <div class="button-wrapper">
+            <BaseButton label="Export CSV" class="filled__blue" @click="exportCSV" />
+          </div>
+        </download-csv>
       </div>
     </div>
   </div> 
@@ -155,7 +185,7 @@ import SearchField from '@/components/SearchField.vue'
 import Indicator from '@/components/Indicator.vue'
 import BaseButton from '@/components/button/BaseButton.vue'
 import { storeToRefs } from 'pinia'
-import { ref, onUnmounted, onMounted, watch, watchEffect, onBeforeMount } from 'vue';
+import { ref, onUnmounted, onMounted, watch, onBeforeMount, watchEffect } from 'vue';
 import sideNav from '@/components/navigation/sideNav.vue'
 import { useMasterDataStore } from '@/stores/MasterDataStore'
 import { useDataStore } from '@/stores/DataStore'
@@ -163,9 +193,11 @@ import lazyCard from '@/components/loading/lazyCard.vue'
 import { useLocalStorage } from "@vueuse/core"
 
 const devicesSelected = useLocalStorage('devicesSelected',[])
-// watch(() => devicesSelected.value, async() => {
-//   console.log(localStorage.getItem('devicesSelected'))
-// })
+
+function updateDevicesSelected(item) {
+  devicesSelected.value[item.index-1] = item
+}
+
 
 //dropdown filter
 const selectedFloor = useLocalStorage('selectedFloor','0')
@@ -190,6 +222,7 @@ watch(() => selectedTray.value, async() => {
   } else {
     masterDataParams.value.tray = selectedTray.value
     realtimeDataParams.value.tray = selectedTray.value
+    getRealtimeData()
     await masterDataStore.getDevices(masterDataParams.value)
   }
 })
@@ -200,6 +233,17 @@ const { floors, trays, devices } = storeToRefs(useMasterDataStore())
 const dataStore = useDataStore()
 const { offlineDevices, onlineDevices } = storeToRefs(useDataStore())
 const loading = ref(false)
+
+watch(() => devices.value, (oldValue,newValue) => {
+  if (localStorage.getItem('devicesSelected') == "[]") {
+    devicesSelected.value = devices.value
+  } 
+  if (newValue.length != 0) {
+    if (oldValue[0].machine_name != newValue[0].machine_name) {
+      devicesSelected.value = devices.value
+    }
+  }
+})
 
 //alert
 const modalActive = ref(false)
@@ -297,6 +341,11 @@ const onlineTableHeader = [
   
 const devicesTableHeader = [
   { text: "Machine Name", value: "machine_name" },
+  { text: "Power Machine", value: "PowerMachine" },
+  { text: "Run Machine", value: "RunMachine" },
+  { text: "RPM", value: "RPM" },
+  { text: "Input Sensor", value: "InputBarang" },
+  { text: "Output Sensor", value: "OutputBarang" },
 ]
   
 async function exportCSV() {
@@ -308,7 +357,7 @@ async function exportCSV() {
     setTimeout(closeNotification, 3000)
   } else {
     await delay(2000)
-    devicesSelected.value = []
+    devicesSelected.value = devices.value
   }
 }
 

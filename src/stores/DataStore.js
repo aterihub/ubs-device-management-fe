@@ -64,8 +64,8 @@ export const useDataStore = defineStore('data', {
         console.error(err)
         this.isLoading = false
         this.status.isError = true
-        this.status.message = err.response.data.error
-        this.status.code = err.response.data.status
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
         return err
       }
     },
@@ -103,8 +103,8 @@ export const useDataStore = defineStore('data', {
         console.error(err)
         this.isLoading = false
         this.status.isError = true
-        this.status.message = err.response.data.error
-        this.status.code = err.response.data.status
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
         return err
       }
     },
@@ -138,8 +138,8 @@ export const useDataStore = defineStore('data', {
         console.error(err)
         this.isLoading = false
         this.status.isError = true
-        this.status.message = err.response.data.error
-        this.status.code = err.response.data.status
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
         return err
       }
     },
@@ -173,8 +173,8 @@ export const useDataStore = defineStore('data', {
         console.error(err)
         this.isLoading = false
         this.status.isError = true
-        this.status.message = err.response.data.error
-        this.status.code = err.response.data.status
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
         return err
       }
     },
@@ -194,8 +194,8 @@ export const useDataStore = defineStore('data', {
         console.error(err)
         this.isLoading = false
         this.status.isError = true
-        this.status.message = err.response.data.error
-        this.status.code = err.response.data.status
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
         return err
       }
     },
@@ -215,8 +215,8 @@ export const useDataStore = defineStore('data', {
         console.error(err)
         this.isLoading = false
         this.status.isError = true
-        this.status.message = err.response.data.error
-        this.status.code = err.response.data.status
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
         return err
       }
     },

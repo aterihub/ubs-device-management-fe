@@ -97,7 +97,7 @@ export const useMasterDataStore = defineStore('master', {
         const res = await masterDataAPI.getDevices(tray)
         this.devices = []
         res.data.data.map((data) => {
-          this.devices.push({machine_name: data._value})
+          this.devices.push({machine_name: data._value, PowerMachine: true, RunMachine: true, RPM: true, InputBarang: true, OutputBarang: true})
         })
         this.isLoading = false
       } catch (err) {
@@ -115,7 +115,7 @@ export const useMasterDataStore = defineStore('master', {
           const { machine_name } = this.airioMachineName.find((x) => {
             return x.device_id == data._value
           })
-          this.devices.push({device_id: data._value, machine_name: machine_name})
+          this.devices.push({device_id: data._value, machine_name: machine_name, RunMachine: true, RPM: true, InputBarang: true, OutputBarang: true})
         })
         this.isLoading = false
       } catch (err) {
