@@ -7,7 +7,7 @@
 <sideNav :isReportActive="true" />
 <div class="content">
   <div class="device-container">
-    <h1 class="title font-bold mb-6">Devices Performace Dashboard</h1>
+    <h1 class="title font-bold mb-6">witDevices Performace Dashboard</h1>
     <div class="flex flex-row lg:flex-col items-center mb-10 w-full">
       <form @submit.prevent="filterData" class="flex gap-4 items-center w-full justify-between">
         <div class="flex gap-4">
@@ -38,7 +38,7 @@
           </select>
           <select v-model="selectedDevice" class="select-option ">
             <option value="-" selected>Select Device</option>
-            <option v-for="item in devices" :key="item.id" :value="item.machine_name">
+            <option v-for="item in witDevices" :key="item.id" :value="item.device_id">
               <p class="font-semibold">{{ item.machine_name }}</p>
             </option>
           </select>
@@ -128,7 +128,7 @@ import { useLocalStorage } from "@vueuse/core"
 
   //stores
   const masterDataStore = useMasterDataStore()
-  const { floors, trays, devices } = storeToRefs(useMasterDataStore())
+  const { floors, trays, witDevices } = storeToRefs(useMasterDataStore())
   const dataStore = useDataStore()
   const { dataDensity, rebootCounter, rebootDetail } = storeToRefs(useDataStore())
 
@@ -163,8 +163,8 @@ import { useLocalStorage } from "@vueuse/core"
   const rebootDetailSearchValue = ref('')
   const dataDensityHeader = [
     { text: "Date time", value: "_time" },
-    { text: "Power Mesin", value: "PowerMesin" ,sortable: true},
-    { text: "Power Mesin Percentage", value: "PowerMesinPercentage" ,sortable: true},
+    // { text: "Power Mesin", value: "PowerMesin" ,sortable: true},
+    // { text: "Power Mesin Percentage", value: "PowerMesinPercentage" ,sortable: true},
     { text: "Run Mesin", value: "RunMesin", sortable: true },
     { text: "Run Mesin Percentage", value: "RunMesinPercentage", sortable: true },
     { text: "RPM", value: "RPM", sortable: true },

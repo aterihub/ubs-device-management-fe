@@ -41,7 +41,7 @@
           </select>
           <select v-model="selectedDevice" class="select-option ">
             <option value="-" selected>Select Device</option>
-            <option v-for="item in devices" :key="item.id" :value="item.machine_name">
+            <option v-for="item in mtnDevices" :key="item.id" :value="item.machine_name">
               <p class="font-semibold">{{ item.machine_name }}</p>
             </option>
           </select>
@@ -129,7 +129,7 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
 
   //stores
   const masterDataStore = useMasterDataStore()
-  const { floors, trays, devices } = storeToRefs(useMasterDataStore())
+  const { floors, trays, mtnDevices } = storeToRefs(useMasterDataStore())
   const dataStore = useDataStore()
   const { dataDensity, rebootCounter, rebootDetail } = storeToRefs(useDataStore())
 
@@ -239,3 +239,4 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
   </style>
+  
