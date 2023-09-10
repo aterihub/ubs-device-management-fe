@@ -28,7 +28,7 @@
         <div class="card border border-[#57C09B] col-span-3" >
           <div class="mb-10 gap-2 flex flex-col">
             <h1 class="font-bold text-3xl">{{realtimeDevicesStatus.online}}/{{realtimeDevicesStatus.total}}</h1>
-            <h2 class="text-xl">Online witDevices</h2>
+            <h2 class="text-xl">Online Devices</h2>
           </div>
           <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 w-full gap-2">
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#57C09B] px-4 py-2 w-full">
@@ -55,12 +55,12 @@
         </div>
         <div class="card border border-[#E63946] w-full justify-center items-center col-span-1" >
             <h1 class="font-bold text-3xl mb-6">{{realtimeDevicesStatus.offline}}/{{realtimeDevicesStatus.total}}</h1>
-            <h2 class="text-xl">Offline witDevices</h2>
+            <h2 class="text-xl">Offline Devices</h2>
         </div>
       </div>
       <div class="table-wrap">
         <div class="table-header">
-          <h1 class="title"> Offline witDevices</h1>
+          <h1 class="title"> Offline Devices</h1>
         </div>
         <SearchField class="outlined" v-model="offlineTableSearchValue" placeholder="Search by IMEI, variant, device name..."/>
         <EasyDataTable
@@ -77,7 +77,7 @@
       </div>
       <div class="table-wrap">
         <div class="table-header">
-          <h1 class="title"> Online witDevices</h1>
+          <h1 class="title"> Online Devices</h1>
         </div>
         <SearchField class="outlined" v-model="onlineTableSearchValue" placeholder="Search by IMEI, variant, device name..."/>
         <EasyDataTable
@@ -114,7 +114,7 @@
       </div>
       <div class="table-wrap">
         <div class="table-header">
-          <h1 class="title"> witDevices Actual Check</h1>
+          <h1 class="title"> Devices Actual Check</h1>
           <div class="text-left">
             <p>notes : </p>
             <p>- hilangkan ceklis mesin yang tidak sesuai dengan aktual di lapangan</p>

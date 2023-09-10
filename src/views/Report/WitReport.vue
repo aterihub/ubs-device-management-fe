@@ -7,7 +7,7 @@
 <sideNav :isReportActive="true" />
 <div class="content">
   <div class="device-container">
-    <h1 class="title font-bold mb-6">witDevices Performace Dashboard</h1>
+    <h1 class="title font-bold mb-6">Devices Performace Dashboard</h1>
     <div class="flex flex-row lg:flex-col items-center mb-10 w-full">
       <form @submit.prevent="filterData" class="flex gap-4 items-center w-full justify-between">
         <div class="flex gap-4">
