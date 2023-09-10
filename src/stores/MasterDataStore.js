@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
 import masterDataAPI from '@/services/masterDataAPI'
 import { ref } from 'vue'
+import { useLocalStorage } from "@vueuse/core"
 
 export const useMasterDataStore = defineStore('master', {
   state: () => ({
-    floors: ref([]),
-    trays: ref([]),
+    floors: useLocalStorage('floors', []),
+    trays: useLocalStorage('trays', []),
     devices: ref([]),
     isLoading: ref(false),
     status: ref({
@@ -55,8 +56,9 @@ export const useMasterDataStore = defineStore('master', {
         console.log(res)
         this.devices = []
         res.data.data.map((data) => {
-          this.devices.push(data._value)
+          this.devices.push({name: data._value})
         })
+        console.log(this.devices)
         this.isLoading = false
       } catch (err) {
         this.isLoading = false

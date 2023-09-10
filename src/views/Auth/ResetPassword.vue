@@ -59,7 +59,7 @@ import router from '@/router'
       setTimeout(closeNotification, 5000)
       resetForm()
     }
-    router.push({name:'Devices List'})
+    router.push({name:'MainReport'})
   }
 
   const closeNotification = () => {

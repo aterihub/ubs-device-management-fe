@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import dataAPI from '@/services/dataAPI'
 import { computed, ref } from 'vue'
+import { useLocalStorage } from "@vueuse/core"
 
 export const useDataStore = defineStore('data', {
   state: () => ({
@@ -18,6 +19,9 @@ export const useDataStore = defineStore('data', {
     isLoading: ref(false)
   }),
   actions: {
+    setData(data) {
+      this.checkbox = data
+    },
     async getRealtimeData(params) {
       this.isLoading = true
       try {
@@ -30,12 +34,14 @@ export const useDataStore = defineStore('data', {
           this.offlineDevices.map((data,index) => {
             this.offlineDevices[index].message = 'MQTT not connected'
             this.offlineDevices[index].uptime = data.uptime/60
+            this.offlineDevices[index].last_heard = new Date(data.last_heard).toLocaleString()
           })
         }
         this.onlineDevices = this.realtimeData.filter(data => data.status == 'ONLINE')
         if (this.onlineDevices.length != 0) {
           this.onlineDevices.map((data,index) => {
             this.onlineDevices[index].uptime = data.uptime/60
+            this.offlineDevices[index].last_heard = new Date(data.last_heard).toLocaleString()
           })
         }
         this.isLoading = false
@@ -61,11 +67,16 @@ export const useDataStore = defineStore('data', {
         if (this.dataDensity.length != 0) {
           this.dataDensity.map((data,index) => {
             this.dataDensity[index]._time = new Date(data._time).toLocaleString()
-            this.dataDensity[index].PowerMesinPercentage = Math.floor((data.PowerMesin/720)*100).toFixed(1).toString() + '%'
-            this.dataDensity[index].RunMesinPercentage = Math.floor((data.RunMesin/720)*100).toFixed(1).toString() + '%'
-            this.dataDensity[index].RPMPercentage = Math.floor((data.RPM/720)*100).toFixed(1).toString() + '%'
-            this.dataDensity[index].InputBarangPercentage = Math.floor((data.InputBarang/720)*100).toFixed(1).toString() + '%'
-            this.dataDensity[index].OutputBarangPercentage = Math.floor((data.OutputBarang/720)*100).toFixed(1).toString() + '%'
+            this.dataDensity[index].PowerMesin = data.PowerMesin == undefined ? '-' : data.PowerMesin
+            this.dataDensity[index].RunMesin = data.RunMesin == undefined ? '-' : data.RunMesin
+            this.dataDensity[index].RPM = data.RPM == undefined ? '-' : data.RPM
+            this.dataDensity[index].InputBarang = data.InputBarang == undefined ? '-' : data.InputBarang
+            this.dataDensity[index].OutputBarang = data.OutputBarang == undefined ? '-' : data.OutputBarang
+            this.dataDensity[index].PowerMesinPercentage = data.PowerMesin == '-' ? '0%' : Math.floor((data.PowerMesin/720)*100).toFixed(1).toString() + '%'
+            this.dataDensity[index].RunMesinPercentage = data.RunMesin == '-' ? '0%' : Math.floor((data.RunMesin/720)*100).toFixed(1).toString() + '%'
+            this.dataDensity[index].RPMPercentage = data.RPM == '-' ? '0%' : Math.floor((data.RPM/720)*100).toFixed(1).toString() + '%'
+            this.dataDensity[index].InputBarangPercentage = data.InputBarang == '-' ? '0%' : Math.floor((data.InputBarang/720)*100).toFixed(1).toString() + '%'
+            this.dataDensity[index].OutputBarangPercentage = data.OutputBarang == '-' ? '0%' : Math.floor((data.OutputBarang/720)*100).toFixed(1).toString() + '%'
           })
         }
         console.log(this.dataDensity)
@@ -86,10 +97,9 @@ export const useDataStore = defineStore('data', {
       try {
         const res = await dataAPI.getRebootCounter(params)
         console.log(res.data.data)
-        this.rebootCounter = []
-        res.data.data.map((data) => {
-          this.rebootCounter = data._value
-        })
+        // res.data.data.map((data) => {
+        //   this.rebootCounter = data._value
+        // })
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message

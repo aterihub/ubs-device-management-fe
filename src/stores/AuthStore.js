@@ -47,7 +47,7 @@ export const useAuthStore = defineStore('auth', {
         this.status.state = false
         localStorage.setItem('auth.accessToken', res.data.accessToken)
         localStorage.setItem('auth.refreshToken', res.data.refreshToken)
-        router.push({ name: 'Dashboard' });
+        router.push({ name: 'MainDashboard' });
       } catch (err) {
         console.error(err)
         this.isLoading = false

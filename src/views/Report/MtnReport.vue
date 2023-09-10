@@ -4,8 +4,7 @@
     :modalActive="modalActive"
     :isError="isError"
     @close="closeNotification" />
-  <sideNav :isDataActive="true" />
-<sideNav :isDevicesActive="true" />
+<sideNav :isReportActive="true" />
 <div class="content">
   <div class="device-container">
     <h1 class="title font-bold mb-6">Devices Performace Dashboard</h1>

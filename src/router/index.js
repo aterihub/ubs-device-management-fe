@@ -2,8 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 // import { useLoadingStore } from '@/stores/LoadingStore'
 
 // import LoginForm from '@/views/Auth/LoginFormNew.vue'
-import DevicesList from '@/views/Devices/DevicesList.vue'
-import Dashboard from '@/views/Dashboard/Dashboard.vue'
+import MainReport from '@/views/Report/MainReport.vue'
+import WitReport from '@/views/Report/WitReport.vue'
+import MtnReport from '@/views/Report/MtnReport.vue'
+import MainDashboard from '@/views/Realtime/MainDashboard.vue'
+import MtnDashboard from '@/views/Realtime/MtnDashboard.vue'
+import WitDashboard from '@/views/Realtime/WitDashboard.vue'
 // import DashboardDetails from '@/views/Dashboard/TDashboardDetails.vue'
 // import DeviceDetails from '@/views/Devices/DeviceDetails.vue'
 // import ResetPassword from '@/views/Auth/ResetPassword.vue'
@@ -14,16 +18,19 @@ import NotFound from '@/views/error/NotFound.vue'
 const routes = [
   // { path: '/', name: 'Login Page', component: LoginForm, meta: { requiresAuth:false, title: 'Intellisense Fleet Management System - Login',  } },
   // { path: '/reset-password', name: 'ResetPassword', component: ResetPassword, meta: { requiresAuth:false} },
-  { path: '/dashboard', name: 'Dashboard', component: Dashboard, meta: { freeAccess: true, requiresAuth:false }},
-  // { path: '/dashboard/details/:id', name: 'Dashboard Details', component: DashboardDetails,props: true, meta: { freeAccess: true, requiresAuth:false }},
+  { path: '/realtime', name: 'MainDashboard', component: MainDashboard, meta: { freeAccess: true, requiresAuth:false }},
+  { path: '/realtime/mtn', name: 'MtnDashboard', component: MtnDashboard, meta: { freeAccess: true, requiresAuth:false }},
+  { path: '/realtime/wit', name: 'WitDashboard', component: WitDashboard, meta: { freeAccess: true, requiresAuth:false }},
   
-  { path: '/devices', name: 'Devices List', component: DevicesList, meta: { freeAccess: true, requiresAuth:false }},
+  { path: '/report', name: 'MainReport', component: MainReport, meta: { freeAccess: true, requiresAuth:false }},
+  { path: '/report/mtn', name: 'WitReport', component: WitReport, meta: { freeAccess: true, requiresAuth:false }},
+  { path: '/report/wit', name: 'MtnReport', component: MtnReport, meta: { freeAccess: true, requiresAuth:false }},
   // { path: '/devices/details/:id', name: 'Device Details', component: DeviceDetails, props: true, meta: { freeAccess: true, requiresAuth:false }},
   // { path: '/geolocation', name: 'MainMap', component: MainMap, meta: { freeAccess: true, requiresAuth:false } },
   // { path: '/setting', name: 'Setting', component: Setting, meta: { freeAccess: true, requiresAuth:false } },
 
   { path: '/:catchALL(.*)', name: 'NotFound', component: NotFound },
-  { path: '/', redirect: '/dashboard' },
+  { path: '/', redirect: '/realtime' },
 ]
 
 const router = createRouter({

@@ -5,7 +5,7 @@
     :modalActive="modalActive"
     :isError="isError"
     @close="closeNotification" />
-  <sideNav :isDataActive="true" />
+  <sideNav :isRealtimeActive="true" />
   <div class="content">
     <div class="device-container">
       <h1 class="title">Realtime Dashboard</h1>
@@ -20,11 +20,10 @@
           </select>
           <select v-model="selectedTray" class="select-option col-span-2">
             <option value="0" selected>Select Tray</option>
-            <option v-for="item in trays" :key="item.id" :value="item">
+            <option v-for="item in trays" :key="item" :value="item">
               <p class="font-semibold">{{ item }}</p>
             </option>
           </select>
-          <BaseButton type="submit" class="filled__blue" label="Filter" :loading="loading" />
         </form>
         <h1>Last Update: <span class="pl-2 font-semibold">{{ lastUpdate }}</span></h1>
       </div>
@@ -116,6 +115,31 @@
           </template>
         </EasyDataTable>
       </div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <h1 class="title"> Devices Actual Check</h1>
+        </div>
+        <SearchField class="outlined" v-model="offlineTableSearchValue" placeholder="Search by IMEI, variant, device name..."/>
+        <EasyDataTable
+        table-class-name="customize-table"
+        :loading="loading"
+        :headers="devicesTableHeader"
+        :items="devices"
+        theme-color="#1363df"        
+        :search-value="offlineTableSearchValue"
+        v-model:items-selected="devicesSelected"
+        fixed-checkbox
+        >
+        </EasyDataTable>
+        <download-csv
+      	class   = "btn btn-default mt-6 justify-end flex"
+      	:data   = "devicesSelected"
+      	:name    = "fileName">
+        <div class="button-wrapper">
+            <BaseButton label="Export CSV" class="filled__blue" />
+        </div>
+      </download-csv>
+      </div>
     </div>
   </div> 
 </template>
@@ -124,28 +148,45 @@
 
 import SearchField from '@/components/SearchField.vue'
 import Indicator from '@/components/Indicator.vue'
-import { storeToRefs } from 'pinia'
-import { ref, onUnmounted, onMounted, watch } from 'vue';
-import sideNav from '@/components/navigation/sideNav.vue'
 import BaseButton from '@/components/button/BaseButton.vue'
+import { storeToRefs } from 'pinia'
+import { ref, onUnmounted, onMounted, watch, watchEffect, onBeforeMount } from 'vue';
+import sideNav from '@/components/navigation/sideNav.vue'
 import { useMasterDataStore } from '@/stores/MasterDataStore'
 import { useDataStore } from '@/stores/DataStore'
 import lazyCard from '@/components/loading/lazyCard.vue'
+import { useLocalStorage } from "@vueuse/core"
+
+const devicesSelected = useLocalStorage('devicesSelected',[])
+watch(() => devicesSelected.value, async() => {
+  console.log(localStorage.getItem('devicesSelected'))
+})
 
 //dropdown filter
-const selectedFloor = ref('0')
-const selectedTray = ref('0')
+const selectedFloor = useLocalStorage('selectedFloor','0')
+const selectedTray = useLocalStorage('selectedTray','0')
 const offlineTableSearchValue = ref('')
 const onlineTableSearchValue = ref('')
 
+const fileName = ref(new Date(Date.now()).toLocaleString() + '_' + selectedTray.value.toString() + '_.csv')
+
+//watch selected floor to get tray
 watch(() => selectedFloor.value, async() => {
   let params = { floor: selectedFloor.value }
   await masterDataStore.getTrays(params)
+  selectedTray.value = trays.value[0]
+})
+
+//watch selected tray to get device
+watch(() => selectedTray.value, async() => {
+  masterDataParams.value.tray = selectedTray.value
+  realtimeDataParams.value.tray = selectedTray.value
+  await masterDataStore.getDevices(masterDataParams.value)
 })
 
 //stores
 const masterDataStore = useMasterDataStore()
-const { floors, trays } = storeToRefs(useMasterDataStore())
+const { floors, trays, devices } = storeToRefs(useMasterDataStore())
 const dataStore = useDataStore()
 const { offlineDevices, onlineDevices } = storeToRefs(useDataStore())
 const loading = ref(false)
@@ -158,7 +199,16 @@ const closeNotification = () => {
   modalActive.value = false
 }
 
-//data
+//query params
+const realtimeDataParams = ref({
+  floor: selectedFloor.value,
+  tray: selectedTray.value
+})
+const masterDataParams = ref({
+  tray: selectedTray.value
+})
+
+//realtime data variable
 const realtimeDevicesStatus = ref({
   normal: '-',
   off: '-',
@@ -170,75 +220,85 @@ const realtimeDevicesStatus = ref({
   offline: '-',
   total: '-'
 })
-
 const lastUpdate = ref('-')
 
+
 //lifecycles
-onMounted( async () => {
+onBeforeMount( async () => {
   await masterDataStore.getFloors()
+  selectedFloor.value = floors.value[0]
+  while (whileState.value) {
+    masterDataParams.value.tray = selectedTray.value
+    realtimeDataParams.value.floor = selectedFloor.value
+    realtimeDataParams.value.tray = selectedTray.value
+    await getRealtimeData()
+    await delay(3000)
+  }
+})
+
+onMounted(async () => {
+  await masterDataStore.getDevices(masterDataParams.value)
 })
 
 onUnmounted(() => {
   whileState.value = false
 })
 
-const realtimeDataParams = ref({
-  floor: selectedFloor.value,
-  tray: selectedTray.value
-})
-
+//watch realtimeDeviceStatus to update Last Update data
 watch(() => dataStore.realtimeDevicesStatus, () => {
   if (dataStore.realtimeData != undefined) {
-    lastUpdate.value = new Date (dataStore.realtimeData[0]._time).toLocaleString()
+    lastUpdate.value = dataStore.realtimeData[0] == undefined ? '-' :  new Date (dataStore.realtimeData[0]._time).toLocaleString()
   }
   realtimeDevicesStatus.value = dataStore.realtimeDevicesStatus
 })
 
+
 const delay = require('delay')
 const whileState = ref(true)
 
-async function filterRealtimeData() {
-  if (selectedFloor.value != '0' && selectedTray.value !='0') {
-    realtimeDataParams.value.floor = selectedFloor.value
-    realtimeDataParams.value.tray = selectedTray.value
-    loading.value = true
-    await getRealtimeData()
-    loading.value = false
-    while (whileState.value) {
-      await getRealtimeData()
-      await delay(29000)
-    }
-  } else {
-    alertMessage.value = 'Please select floor and tray first'
-    isError.value = true
-    modalActive.value = true
-    setTimeout(closeNotification, 3000)
-  }
-}
-
+//fetch realtime data function
 async function getRealtimeData() {
   await dataStore.getRealtimeData(realtimeDataParams.value)
 }
 
-//table
+//table header
 const offlineTableHeader = [
-    { text: "Machine Name", value: "machine_name" },
-    { text: "Error Description", value: "message", sortable: true },
-    { text: "Last Heard", value: "lastHeard", sortable: true },
-  ]
+  { text: "Machine Name", value: "machine_name" },
+  { text: "Error Description", value: "message"},
+  { text: "Last Heard", value: "last_heard", sortable: true },
+]
 const onlineTableHeader = [
-    { text: "Machine Name", value: "machine_name" },
-    { text: "Machine Type", value: "machine_type" ,sortable: true},
-    { text: "Error Description", value: "message", sortable: true },
-    { text: "Machine Power", value: "PowerMesin", sortable: true},
-    { text: "Machine Running", value: "RunMesin", sortable: true },
-    { text: "RPM", value: "RPM", sortable: true },
-    { text: "Input Sensor", value: "InputBarang", sortable: true },
-    { text: "Output Sensor", value: "OutputBarang", sortable: true },
-    { text: "Uptime (min)", value: "uptime", sortable: true },
-    { text: "Last Heard", value: "lastHeard", sortable: true },
-  ]
+  { text: "Machine Name", value: "machine_name" },
+  { text: "Machine Type", value: "machine_type" ,sortable: true},
+  { text: "Error Description", value: "message", sortable: true },
+  { text: "Machine Power", value: "PowerMesin", sortable: true},
+  { text: "Machine Running", value: "RunMesin", sortable: true },
+  { text: "RPM", value: "RPM", sortable: true },
+  { text: "Input Sensor", value: "InputBarang", sortable: true },
+  { text: "Output Sensor", value: "OutputBarang", sortable: true },
+  { text: "Uptime (min)", value: "uptime", sortable: true },
+  { text: "Last Heard", value: "lastHeard", sortable: true },
+]
+  
+const devicesTableHeader = [
+  { text: "Machine Name", value: "name" },
+]
+  
 
+// async function filterRealtimeData() {
+//   if (selectedFloor.value != '0' && selectedTray.value !='0') {
+//     realtimeDataParams.value.floor = selectedFloor.value
+//     realtimeDataParams.value.tray = selectedTray.value
+//     loading.value = true
+//     await getRealtimeData()
+//     loading.value = false
+//   } else {
+//     alertMessage.value = 'Please select floor and tray first'
+//     isError.value = true
+//     modalActive.value = true
+//     setTimeout(closeNotification, 3000)
+//   }
+// }
 </script>
   
 <style scoped>

@@ -27,7 +27,7 @@
     "vue-lottie": "^0.2.1",
     "vue-router": "^4.0.16",
     "vue-slider-component": "^4.1.0-beta.2",
-    "vue3-easy-data-table": "^1.5.36",
+    "vue3-easy-data-table": "^1.5.45",
     "vue3-openlayers": "^0.1.74",
     "yup": "^0.32.11"
   },

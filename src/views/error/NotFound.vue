@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-screen bg-black flex flex-col justify-center items-center gap-[40px]">
+  <div class="absolute left-0 top-0 w-full h-screen bg-black flex flex-col justify-center items-center gap-[40px]">
     <img class="w-[400px]" src="@/assets/img/404.png" alt="" srcset="">
     <img class="absolute" src="@/assets/img/crossline.png" alt="" srcset="">
     <div>
