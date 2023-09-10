@@ -123,11 +123,11 @@ export const useDataStore = defineStore('data', {
             this.dataDensity[index].RPM = data.RPM == undefined ? '-' : data.RPM
             this.dataDensity[index].InputBarang = data.InputBarang == undefined ? '-' : data.InputBarang
             this.dataDensity[index].OutputBarang = data.OutputBarang == undefined ? '-' : data.OutputBarang
-            this.dataDensity[index].PowerMesinPercentage = data.PowerMesin == '-' ? '0%' : Math.floor((data.PowerMesin / 720) * 100).toFixed(1).toString() + '%'
-            this.dataDensity[index].RunMesinPercentage = data.RunMesin == '-' ? '0%' : Math.floor((data.RunMesin / 720) * 100).toFixed(1).toString() + '%'
-            this.dataDensity[index].RPMPercentage = data.RPM == '-' ? '0%' : Math.floor((data.RPM / 720) * 100).toFixed(1).toString() + '%'
-            this.dataDensity[index].InputBarangPercentage = data.InputBarang == '-' ? '0%' : Math.floor((data.InputBarang / 720) * 100).toFixed(1).toString() + '%'
-            this.dataDensity[index].OutputBarangPercentage = data.OutputBarang == '-' ? '0%' : Math.floor((data.OutputBarang / 720) * 100).toFixed(1).toString() + '%'
+            this.dataDensity[index].PowerMesinPercentage = data.PowerMesin == '-' ? '0%' : ((data.PowerMesin / 720) * 100).toFixed(1).toString() + '%'
+            this.dataDensity[index].RunMesinPercentage = data.RunMesin == '-' ? '0%' : ((data.RunMesin / 720) * 100).toFixed(1).toString() + '%'
+            this.dataDensity[index].RPMPercentage = data.RPM == '-' ? '0%' : ((data.RPM / 720) * 100).toFixed(1).toString() + '%'
+            this.dataDensity[index].InputBarangPercentage = data.InputBarang == '-' ? '0%' : ((data.InputBarang / 720) * 100).toFixed(1).toString() + '%'
+            this.dataDensity[index].OutputBarangPercentage = data.OutputBarang == '-' ? '0%' : ((data.OutputBarang / 720) * 100).toFixed(1).toString() + '%'
           })
         }
         console.log(this.dataDensity)
@@ -159,10 +159,10 @@ export const useDataStore = defineStore('data', {
             this.dataDensity[index].InputBarang = data.InputBarang == undefined ? '-' : data.InputBarang
             this.dataDensity[index].OutputBarang = data.OutputBarang == undefined ? '-' : data.OutputBarang
             // this.dataDensity[index].PowerMesinPercentage = data.PowerMesin == '-' ? '0%' : Math.floor((data.PowerMesin/720)*100).toFixed(1).toString() + '%'
-            this.dataDensity[index].RunMesinPercentage = data.RunMesin == '-' ? '0%' : Math.floor((data.RunMesin / 720) * 100).toFixed(1).toString() + '%'
-            this.dataDensity[index].RPMPercentage = data.RPM == '-' ? '0%' : Math.floor((data.RPM / 720) * 100).toFixed(1).toString() + '%'
-            this.dataDensity[index].InputBarangPercentage = data.InputBarang == '-' ? '0%' : Math.floor((data.InputBarang / 720) * 100).toFixed(1).toString() + '%'
-            this.dataDensity[index].OutputBarangPercentage = data.OutputBarang == '-' ? '0%' : Math.floor((data.OutputBarang / 720) * 100).toFixed(1).toString() + '%'
+            this.dataDensity[index].RunMesinPercentage = data.RunMesin == '-' ? '0%' : ((data.RunMesin / 720) * 100).toFixed(1).toString() + '%'
+            this.dataDensity[index].RPMPercentage = data.RPM == '-' ? '0%' : ((data.RPM / 720) * 100).toFixed(1).toString() + '%'
+            this.dataDensity[index].InputBarangPercentage = data.InputBarang == '-' ? '0%' : ((data.InputBarang / 720) * 100).toFixed(1).toString() + '%'
+            this.dataDensity[index].OutputBarangPercentage = data.OutputBarang == '-' ? '0%' : ((data.OutputBarang / 720) * 100).toFixed(1).toString() + '%'
           })
         }
         console.log(this.dataDensity)
