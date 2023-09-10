@@ -21,7 +21,8 @@ export const useMasterDataStore = defineStore('master', {
     ],
     floors: useLocalStorage('floors', []),
     trays: useLocalStorage('trays', []),
-    devices: ref([]),
+    mtnDevices: ref([]),
+    witDevices: ref([]),
     isLoading: ref(false),
     status: ref({
       isError:null,
@@ -95,9 +96,9 @@ export const useMasterDataStore = defineStore('master', {
       this.isLoading = true
       try {
         const res = await masterDataAPI.getDevices(tray)
-        this.devices = []
+        this.mtnDevices = []
         res.data.data.map((data) => {
-          this.devices.push({machine_name: data._value, PowerMachine: true, RunMachine: true, RPM: true, InputBarang: true, OutputBarang: true})
+          this.mtnDevices.push({machine_name: data._value, PowerMachine: true, RunMachine: true, RPM: true, InputBarang: true, OutputBarang: true})
         })
         this.isLoading = false
       } catch (err) {
@@ -110,12 +111,12 @@ export const useMasterDataStore = defineStore('master', {
       this.isLoading = true
       try {
         const res = await masterDataAPI.getAirioDevices(tray)
-        this.devices = []
+        this.witDevices = []
         res.data.data.map((data) => {
           const { machine_name } = this.airioMachineName.find((x) => {
             return x.device_id == data._value
           })
-          this.devices.push({device_id: data._value, machine_name: machine_name, RunMachine: true, RPM: true, InputBarang: true, OutputBarang: true})
+          this.witDevices.push({device_id: data._value, machine_name: machine_name, RunMachine: true, RPM: true, InputBarang: true, OutputBarang: true})
         })
         this.isLoading = false
       } catch (err) {

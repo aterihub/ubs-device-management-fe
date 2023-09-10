@@ -31,7 +31,7 @@
         <div class="card border border-[#57C09B] col-span-3" >
           <div class="mb-10 gap-2 flex flex-col">
             <h1 class="font-bold text-3xl">{{realtimeDevicesStatus.online}}/{{realtimeDevicesStatus.total}}</h1>
-            <h2 class="text-xl">Online Devices</h2>
+            <h2 class="text-xl">Online mtnDevices</h2>
           </div>
           <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 w-full gap-2">
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#57C09B] px-4 py-2 w-full">
@@ -58,12 +58,12 @@
         </div>
         <div class="card border border-[#E63946] w-full justify-center items-center col-span-1" >
             <h1 class="font-bold text-3xl mb-6">{{realtimeDevicesStatus.offline}}/{{realtimeDevicesStatus.total}}</h1>
-            <h2 class="text-xl">Offline Devices</h2>
+            <h2 class="text-xl">Offline mtnDevices</h2>
         </div>
       </div>
       <div class="table-wrap">
         <div class="table-header">
-          <h1 class="title"> Offline Devices</h1>
+          <h1 class="title"> Offline mtnDevices</h1>
         </div>
         <SearchField class="outlined" v-model="offlineTableSearchValue" placeholder="Search by IMEI, variant, device name..."/>
         <EasyDataTable
@@ -80,7 +80,7 @@
       </div>
       <div class="table-wrap">
         <div class="table-header">
-          <h1 class="title"> Online Devices</h1>
+          <h1 class="title"> Online mtnDevices</h1>
         </div>
         <SearchField class="outlined" v-model="onlineTableSearchValue" placeholder="Search by IMEI, variant, device name..."/>
         <EasyDataTable
@@ -118,10 +118,10 @@
       
       <div class="table-wrap">
         <div class="table-header">
-          <h1 class="title"> Devices Actual Check</h1>
+          <h1 class="title"> mtnDevices Actual Check</h1>
           <div class="text-left">
             <p>notes : </p>
-            <p>- ceklis mesin yang tidak sesuai dengan aktual di lapangan</p>
+            <p>- hilangkan ceklis mesin yang tidak sesuai dengan aktual di lapangan</p>
             <p>- refresh rate 30 detik</p>
           </div>
         </div>
@@ -168,7 +168,7 @@
         </EasyDataTable>
         <download-csv
         	class   = "btn btn-default mt-6 justify-end flex"
-        	:data   = "devicesSelected"
+        	:data   = "devicesSelectedExport"
         	:name    = "fileName">
           <div class="button-wrapper">
             <BaseButton label="Export CSV" class="filled__blue" @click="exportCSV" />
@@ -192,10 +192,21 @@ import { useDataStore } from '@/stores/DataStore'
 import lazyCard from '@/components/loading/lazyCard.vue'
 import { useLocalStorage } from "@vueuse/core"
 
-const devicesSelected = useLocalStorage('devicesSelected',[])
+const devicesSelected = useLocalStorage('mtnDevicesSelected',[])
+const devicesSelectedExport = useLocalStorage('mtnDevicesSelectedExport',[])
+
 
 function updateDevicesSelected(item) {
   devicesSelected.value[item.index-1] = item
+  devicesSelectedExport.value[item.index-1] = item
+  delete devicesSelectedExport.value[item.index-1].key
+  delete devicesSelectedExport.value[item.index-1].index
+  console.log(devicesSelectedExport.value)
+  if (item.RunMachine == true && item.PowerMachine == true && item.RPM == true && item.InputBarang == true && item.OutputBarang == true) {
+    console.log('all true')
+    devicesSelectedExport.value = devicesSelectedExport.value.filter(obj => obj.machine_name !== item.machine_name)
+    console.log(devicesSelectedExport.value)
+  } 
 }
 
 
@@ -229,18 +240,18 @@ watch(() => selectedTray.value, async() => {
 
 //stores
 const masterDataStore = useMasterDataStore()
-const { floors, trays, devices } = storeToRefs(useMasterDataStore())
+const { floors, trays, mtnDevices } = storeToRefs(useMasterDataStore())
 const dataStore = useDataStore()
 const { offlineDevices, onlineDevices } = storeToRefs(useDataStore())
 const loading = ref(false)
 
-watch(() => devices.value, (oldValue,newValue) => {
-  if (localStorage.getItem('devicesSelected') == "[]") {
-    devicesSelected.value = devices.value
+watch(() => mtnDevices.value, (oldValue,newValue) => {
+  if (localStorage.getItem('mtnDevicesSelected') == "[]") {
+    devicesSelected.value = mtnDevices.value
   } 
   if (newValue.length != 0) {
     if (oldValue[0].machine_name != newValue[0].machine_name) {
-      devicesSelected.value = devices.value
+      devicesSelected.value = mtnDevices.value
     }
   }
 })
@@ -349,15 +360,15 @@ const devicesTableHeader = [
 ]
   
 async function exportCSV() {
-    console.log(devicesSelected.value)
-  if (devicesSelected.value.length == 0) {
+  if (devicesSelectedExport.value.length == 0) {
     alertMessage.value = 'Check the device first'
     isError.value = true
     modalActive.value = true
     setTimeout(closeNotification, 3000)
   } else {
     await delay(2000)
-    devicesSelected.value = devices.value
+    devicesSelected.value = mtnDevices.value
+    devicesSelectedExport.value = []
   }
 }
 
