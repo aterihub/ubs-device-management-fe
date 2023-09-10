@@ -33,11 +33,8 @@
               <p class="font-semibold">{{ item }}</p>
           </option>
           </select>
-          <select v-model="selectedTray" class="select-option ">
-            <option value="0" selected>Select Tray</option>
-            <option v-for="item in trays" :key="item.id" :value="item">
-              <p class="font-semibold">{{ item }}</p>
-            </option>
+          <select v-model="selectedAirioTray" class="select-option ">
+            <option value="TrayG" selected>Tray G</option>
           </select>
           <select v-model="selectedDevice" class="select-option ">
             <option value="-" selected>Select Device</option>
@@ -99,6 +96,7 @@ import { onMounted, ref, watch} from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDataStore } from '@/stores/DataStore'
 import { useMasterDataStore } from '@/stores/MasterDataStore'
+import { useLocalStorage } from "@vueuse/core"
   
   const loading = ref(false)
 
@@ -110,8 +108,8 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
     modalActive.value = false
   }
   //dropdown filter
-  const selectedFloor = ref('0')
-  const selectedTray = ref('0')
+  const selectedFloor = useLocalStorage('selectedFloor','0')
+  const selectedAirioTray = useLocalStorage('selectedAirioTray','TrayG')
   const selectedDevice = ref('-')
   const startDate = ref(new Date().toLocaleDateString('en-CA'))
   const startTime = ref('')
@@ -122,8 +120,9 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
     let params = { floor: selectedFloor.value }
     await masterDataStore.getAirioTrays(params)
   })
-  watch(() => selectedTray.value, async() => {
-    let params = { tray: selectedTray.value }
+
+  watch(() => selectedAirioTray.value, async() => {
+    let params = { tray: selectedAirioTray.value }
     await masterDataStore.getAirioDevices(params)
   })
 
@@ -135,12 +134,14 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
 
   onMounted( async () => {
     await masterDataStore.getAirioFloors()
+    let params = { tray: selectedAirioTray.value }
+    await masterDataStore.getAirioDevices(params)
   })
 
   
   async function filterData() {
     console.log()
-    if (selectedFloor.value != '0' && selectedTray.value != '0' && selectedDevice.value != '-' && startTime.value != '' && startTime.value != '') {
+    if (selectedFloor.value != '0' && selectedAirioTray.value != '0' && selectedDevice.value != '-' && startTime.value != '' && startTime.value != '') {
       let params = {
         device: selectedDevice.value,
         start: new Date(startDate.value + 'T' + startTime.value).toISOString(),

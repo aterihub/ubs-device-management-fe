@@ -23,8 +23,8 @@ const routes = [
   { path: '/realtime/wit', name: 'WitDashboard', component: WitDashboard, meta: { freeAccess: true, requiresAuth:false }},
   
   { path: '/report', name: 'MainReport', component: MainReport, meta: { freeAccess: true, requiresAuth:false }},
-  { path: '/report/mtn', name: 'WitReport', component: WitReport, meta: { freeAccess: true, requiresAuth:false }},
-  { path: '/report/wit', name: 'MtnReport', component: MtnReport, meta: { freeAccess: true, requiresAuth:false }},
+  { path: '/report/wit', name: 'WitReport', component: WitReport, meta: { freeAccess: true, requiresAuth:false }},
+  { path: '/report/mtn', name: 'MtnReport', component: MtnReport, meta: { freeAccess: true, requiresAuth:false }},
   // { path: '/devices/details/:id', name: 'Device Details', component: DeviceDetails, props: true, meta: { freeAccess: true, requiresAuth:false }},
   // { path: '/geolocation', name: 'MainMap', component: MainMap, meta: { freeAccess: true, requiresAuth:false } },
   // { path: '/setting', name: 'Setting', component: Setting, meta: { freeAccess: true, requiresAuth:false } },
