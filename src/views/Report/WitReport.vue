@@ -48,23 +48,23 @@
         </div>
       </form>
     </div>
-    <div class="table-wrap">
-        <div class="table-header">
-          <h1 class="title font-light">Reboot Counter</h1>
-          <h2 class="font-extralight mt-2"> Total Reboot: <span class="pl-2 font-semibold">{{ rebootCounter }}</span></h2>
-        </div>
-        <SearchField class="outlined" v-model="rebootDetailSearchValue" placeholder="Search by IMEI, variant, device name..."/>
-        <EasyDataTable
-          table-class-name="customize-table"
-          :loading="loading"
-          :headers="rebootDetailHeader"
-          :items="rebootDetail"
-          theme-color="#1363df"        
-          :search-value="rebootDetailSearchValue"
-          header-text-direction="center"
-          body-text-direction="center"
-          >
-        </EasyDataTable>
+    <div class="table-wrap mb-10">
+      <div class="table-header">
+        <h1 class="title font-light">Reboot Counter</h1>
+        <h2 class="font-extralight mt-2"> Total Reboot: <span class="pl-2 font-semibold">{{ rebootCounter }}</span></h2>
+      </div>
+      <SearchField class="outlined" v-model="rebootDetailSearchValue" placeholder="Search by IMEI, variant, device name..."/>
+      <EasyDataTable
+        table-class-name="customize-table"
+        :loading="loading"
+        :headers="rebootDetailHeader"
+        :items="rebootDetail"
+        theme-color="#1363df"        
+        :search-value="rebootDetailSearchValue"
+        header-text-direction="center"
+        body-text-direction="center"
+        >
+      </EasyDataTable>
     </div>
     <div class="table-wrap">
       <div class="table-header">
