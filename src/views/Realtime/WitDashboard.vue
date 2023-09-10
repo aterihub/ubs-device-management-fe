@@ -164,7 +164,7 @@
         </EasyDataTable>
         <download-csv
         	class   = "btn btn-default mt-6 justify-end flex"
-        	:data   = "devicesSelected"
+        	:data   = "devicesSelectedExport"
         	:name    = "fileName">
           <div class="button-wrapper">
             <BaseButton label="Export CSV" class="filled__blue" @click="exportCSV" />
