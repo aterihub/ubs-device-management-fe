@@ -69,7 +69,7 @@
     <div class="table-wrap">
       <div class="table-header">
         <h1 class="title font-light"> Data Density</h1>
-        <h2 class="font-extralight mt-2"> Expected Data Density: <span class="font-semibold">720 Data</span></h2>
+        <h2 class="font-extralight mt-2"> Expected Data Density: <span class="font-semibold">720 Data / Hour</span></h2>
       </div>
       <SearchField class="outlined" v-model="dataDensitySearchValue" placeholder="Search by IMEI, variant, device name..."/>
       <EasyDataTable
@@ -150,6 +150,7 @@ import { useLocalStorage } from "@vueuse/core"
       loading.value = true
       await dataStore.getAirioDataDensity(params)
       await dataStore.getAirioRebootCounter(params)
+      await dataStore.getAirioDuplicate(params)
       loading.value = false
     } else {
       alertMessage.value = 'Please select time, floor, tray, device first'

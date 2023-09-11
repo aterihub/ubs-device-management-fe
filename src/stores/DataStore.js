@@ -73,7 +73,7 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getAirioRealtimeData(params)
-        console.log(res)
+        console.log('res',res)
         this.realtimeDevicesStatus = res.data.data.counter
         this.realtimeData = res.data.data.data
         this.offlineDevices = this.realtimeData.filter(data => data.status == 'OFFLINE')
@@ -90,9 +90,13 @@ export const useDataStore = defineStore('data', {
         }
         this.onlineDevices = this.realtimeData.filter(data => data.status == 'ONLINE')
         if (this.onlineDevices.length != 0) {
-          this.onlineDevices.map((data, index) => {
-            this.onlineDevices[index].uptime = data.uptime / 60
-            this.offlineDevices[index].last_heard = new Date(data.last_heard).toLocaleString()
+          this.onlineDevices.forEach((data) => {
+            const { machine_name } = this.airioMachineName.find((x) => {
+              return x.device_id == data.device_id
+            })
+            data.machine_name = machine_name
+            data.uptime = data.uptime / 60
+            data.last_heard = new Date(data.last_heard).toLocaleString()
           })
         }
         this.isLoading = false
@@ -182,9 +186,7 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getRebootCounter(params)
-        console.log(res.data.data)
         this.rebootCounter = res.data.data.count
-        console.log(this.rebootCounter)
         this.rebootDetail = res.data.data.detail
         this.isLoading = false
         this.status.isError = false
@@ -203,10 +205,26 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getAirioRebootCounter(params)
+        this.rebootCounter = res.data.data.count
+        this.rebootDetail = res.data.data.detail
+        this.isLoading = false
+        this.status.isError = false
+        this.status.message = res.data.message
+        this.status.code = res.data.status
+      } catch (err) {
+        console.error(err)
+        this.isLoading = false
+        this.status.isError = true
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
+        return err
+      }
+    },
+    async getAirioDuplicate(params) {
+      this.isLoading = true
+      try {
+        const res = await dataAPI.getAirioDuplicate(params)
         console.log(res.data.data)
-        // res.data.data.map((data) => {
-        //   this.rebootCounter = data._value
-        // })
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message

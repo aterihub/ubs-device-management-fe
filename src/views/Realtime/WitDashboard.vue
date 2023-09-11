@@ -320,7 +320,7 @@ const offlineTableHeader = [
 const onlineTableHeader = [
   { text: "Machine Name", value: "machine_name" },
   { text: "Device ID", value: "device_id" },
-  { text: "Machine Type", value: "machine_type" ,sortable: true},
+  // { text: "Machine Type", value: "machine_type" ,sortable: true},
   { text: "Error Description", value: "message", sortable: true },
   // { text: "Machine Power", value: "PowerMesin", sortable: true},
   { text: "Machine Running", value: "RunMesin", sortable: true },
@@ -328,7 +328,7 @@ const onlineTableHeader = [
   { text: "Input Sensor", value: "InputBarang", sortable: true },
   { text: "Output Sensor", value: "OutputBarang", sortable: true },
   { text: "Uptime (min)", value: "uptime", sortable: true },
-  { text: "Last Heard", value: "lastHeard", sortable: true },
+  { text: "Last Heard", value: "last_heard", sortable: true },
 ]
   
 const devicesTableHeader = [
