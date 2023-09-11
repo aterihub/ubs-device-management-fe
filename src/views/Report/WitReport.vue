@@ -51,14 +51,14 @@
     <div class="table-wrap mb-10">
       <div class="table-header">
         <h1 class="title font-light">Reboot Counter</h1>
-        <h2 class="font-extralight mt-2"> Total Reboot: <span class="pl-2 font-semibold">{{ rebootCounter }}</span></h2>
+        <h2 class="font-extralight mt-2"> Total Reboot: <span class="pl-2 font-semibold">{{ airioRebootCounter }}</span></h2>
       </div>
       <SearchField class="outlined" v-model="rebootDetailSearchValue" placeholder="Search by IMEI, variant, device name..."/>
       <EasyDataTable
         table-class-name="customize-table"
         :loading="loading"
         :headers="rebootDetailHeader"
-        :items="rebootDetail"
+        :items="airioRebootDetail"
         theme-color="#1363df"        
         :search-value="rebootDetailSearchValue"
         header-text-direction="center"
@@ -76,7 +76,7 @@
         table-class-name="customize-table"
         :loading="loading"
         :headers="dataDensityHeader"
-        :items="dataDensity"
+        :items="airioDataDensity"
         theme-color="#1363df"        
         :search-value="dataDensitySearchValue"
         header-text-direction="center"
@@ -88,48 +88,16 @@
       <div class="table-header">
         <h1 class="title font-light"> Data Duplicate</h1>
       </div>
-      <div class="grid grid-cols-4 gap-4">
-        <EasyDataTable
-          table-class-name="customize-table"
-          :loading="loading"
-          :headers="runMesinDuplicateHeader"
-          :items="runMesinDuplicate"
-          theme-color="#1363df"        
-          header-text-direction="center"
-          body-text-direction="center"
-          >
-        </EasyDataTable>
-        <EasyDataTable
-          table-class-name="customize-table"
-          :loading="loading"
-          :headers="rpmDuplicateHeader"
-          :items="rpmDuplicate"
-          theme-color="#1363df"        
-          header-text-direction="center"
-          body-text-direction="center"
-          >
-        </EasyDataTable>
-        <EasyDataTable
-          table-class-name="customize-table"
-          :loading="loading"
-          :headers="inputBarangDuplicateHeader"
-          :items="inputBarangDuplicate"
-          theme-color="#1363df"        
-          header-text-direction="center"
-          body-text-direction="center"
-          >
-        </EasyDataTable>
-        <EasyDataTable
-          table-class-name="customize-table"
-          :loading="loading"
-          :headers="outputBarangDuplicateHeader"
-          :items="outputBarangDuplicate"
-          theme-color="#1363df"        
-          header-text-direction="center"
-          body-text-direction="center"
-          >
-        </EasyDataTable>
-      </div>
+      <EasyDataTable
+        table-class-name="customize-table"
+        :loading="loading"
+        :headers="duplicateHeader"
+        :items="airioDuplicateData"
+        theme-color="#1363df"        
+        header-text-direction="center"
+        body-text-direction="center"
+        >
+      </EasyDataTable>
     </div>
   </div> 
 </div>    
@@ -177,7 +145,7 @@ import { useLocalStorage } from "@vueuse/core"
   const masterDataStore = useMasterDataStore()
   const { floors, trays, witDevices } = storeToRefs(useMasterDataStore())
   const dataStore = useDataStore()
-  const { dataDensity, rebootCounter, rebootDetail, runMesinDuplicate, rpmDuplicate, inputBarangDuplicate, outputBarangDuplicate } = storeToRefs(useDataStore())
+  const { airioDataDensity, airioRebootCounter, airioRebootDetail, airioDuplicateData } = storeToRefs(useDataStore())
 
   onMounted( async () => {
     await masterDataStore.getAirioFloors()
@@ -227,21 +195,12 @@ import { useLocalStorage } from "@vueuse/core"
     { text: "State", value: "state" ,sortable: true},
     { text: "Detail", value: "detail" ,sortable: true},
   ]
-  const rpmDuplicateHeader = [
+  const duplicateHeader = [
     { text: "Date time", value: "_time" },
-    { text: "RPM", value: "_value" ,sortable: true},
-  ]
-  const runMesinDuplicateHeader = [
-    { text: "Date time", value: "_time" },
-    { text: "Run Machine", value: "_value" ,sortable: true},
-  ]
-  const inputBarangDuplicateHeader = [
-    { text: "Date time", value: "_time" },
-    { text: "Input Sensor", value: "_value" ,sortable: true},
-  ]
-  const outputBarangDuplicateHeader = [
-    { text: "Date time", value: "_time" },
-    { text: "Output Sensor", value: "_value" ,sortable: true},
+    { text: "Run Machine", value: "runMesin" ,sortable: true},
+    { text: "RPM", value: "rpm" ,sortable: true},
+    { text: "Input Sensor", value: "inputBarang" ,sortable: true},
+    { text: "Output Sensor", value: "outputBarang" ,sortable: true},
   ]
 
 
