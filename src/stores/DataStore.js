@@ -20,6 +20,10 @@ export const useDataStore = defineStore('data', {
       { machine_name: 'R826', device_id: 'C8C9A3CC371C' }
     ],
     rebootCounter: ref('-'),
+    rpmDuplicate: ref([]),
+    runMesinDuplicate: ref([]),
+    inputBarangDuplicate: ref([]),
+    outputBarangDuplicate: ref([]),
     rebootDetail: ref([]),
     dataDensity: ref([]),
     realtimeData: ref([]),
@@ -73,7 +77,6 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getAirioRealtimeData(params)
-        console.log('res',res)
         this.realtimeDevicesStatus = res.data.data.counter
         this.realtimeData = res.data.data.data
         this.offlineDevices = this.realtimeData.filter(data => data.status == 'OFFLINE')
@@ -206,6 +209,9 @@ export const useDataStore = defineStore('data', {
       try {
         const res = await dataAPI.getAirioRebootCounter(params)
         this.rebootCounter = res.data.data.count
+        res.data.data.detail.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+        })
         this.rebootDetail = res.data.data.detail
         this.isLoading = false
         this.status.isError = false
@@ -224,7 +230,27 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getAirioDuplicate(params)
-        console.log(res.data.data)
+        console.log('duplicate',res.data.data)
+        res.data.data.runMesin.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        res.data.data.rpm.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        res.data.data.inputBarang.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        res.data.data.outputBarang.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        this.rpmDuplicate = res.data.data.rpm,
+        this.runMesinDuplicate = res.data.data.runMesin
+        this.inputBarangDuplicate = res.data.data.inputBarang,
+        this.outputBarangDuplicate = res.data.data.outputBarang,
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message

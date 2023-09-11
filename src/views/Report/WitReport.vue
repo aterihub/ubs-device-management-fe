@@ -66,7 +66,7 @@
         >
       </EasyDataTable>
     </div>
-    <div class="table-wrap">
+    <div class="table-wrap mb-10">
       <div class="table-header">
         <h1 class="title font-light"> Data Density</h1>
         <h2 class="font-extralight mt-2"> Expected Data Density: <span class="font-semibold">720 Data / Hour</span></h2>
@@ -83,6 +83,53 @@
         body-text-direction="center"
         >
       </EasyDataTable>
+    </div>
+    <div class="table-wrap">
+      <div class="table-header">
+        <h1 class="title font-light"> Data Duplicate</h1>
+      </div>
+      <div class="grid grid-cols-4 gap-4">
+        <EasyDataTable
+          table-class-name="customize-table"
+          :loading="loading"
+          :headers="runMesinDuplicateHeader"
+          :items="runMesinDuplicate"
+          theme-color="#1363df"        
+          header-text-direction="center"
+          body-text-direction="center"
+          >
+        </EasyDataTable>
+        <EasyDataTable
+          table-class-name="customize-table"
+          :loading="loading"
+          :headers="rpmDuplicateHeader"
+          :items="rpmDuplicate"
+          theme-color="#1363df"        
+          header-text-direction="center"
+          body-text-direction="center"
+          >
+        </EasyDataTable>
+        <EasyDataTable
+          table-class-name="customize-table"
+          :loading="loading"
+          :headers="inputBarangDuplicateHeader"
+          :items="inputBarangDuplicate"
+          theme-color="#1363df"        
+          header-text-direction="center"
+          body-text-direction="center"
+          >
+        </EasyDataTable>
+        <EasyDataTable
+          table-class-name="customize-table"
+          :loading="loading"
+          :headers="outputBarangDuplicateHeader"
+          :items="outputBarangDuplicate"
+          theme-color="#1363df"        
+          header-text-direction="center"
+          body-text-direction="center"
+          >
+        </EasyDataTable>
+      </div>
     </div>
   </div> 
 </div>    
@@ -130,7 +177,7 @@ import { useLocalStorage } from "@vueuse/core"
   const masterDataStore = useMasterDataStore()
   const { floors, trays, witDevices } = storeToRefs(useMasterDataStore())
   const dataStore = useDataStore()
-  const { dataDensity, rebootCounter, rebootDetail } = storeToRefs(useDataStore())
+  const { dataDensity, rebootCounter, rebootDetail, runMesinDuplicate, rpmDuplicate, inputBarangDuplicate, outputBarangDuplicate } = storeToRefs(useDataStore())
 
   onMounted( async () => {
     await masterDataStore.getAirioFloors()
@@ -179,6 +226,22 @@ import { useLocalStorage } from "@vueuse/core"
     { text: "Date time", value: "_time" },
     { text: "State", value: "state" ,sortable: true},
     { text: "Detail", value: "detail" ,sortable: true},
+  ]
+  const rpmDuplicateHeader = [
+    { text: "Date time", value: "_time" },
+    { text: "RPM", value: "_value" ,sortable: true},
+  ]
+  const runMesinDuplicateHeader = [
+    { text: "Date time", value: "_time" },
+    { text: "Run Machine", value: "_value" ,sortable: true},
+  ]
+  const inputBarangDuplicateHeader = [
+    { text: "Date time", value: "_time" },
+    { text: "Input Sensor", value: "_value" ,sortable: true},
+  ]
+  const outputBarangDuplicateHeader = [
+    { text: "Date time", value: "_time" },
+    { text: "Output Sensor", value: "_value" ,sortable: true},
   ]
 
 
