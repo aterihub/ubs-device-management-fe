@@ -44,7 +44,7 @@ export default {
   @apply w-2 h-2 box-border rounded-full
 }
 .indicator-on {
-  @apply animate-ping bg-sky-400
+  @apply animate-ping bg-green-400
 }
 .indicator-off {
   box-shadow: 0px 0px 4px 1px #C0C0C0, inset 0px 0px 7px #C0C0C0;
@@ -57,7 +57,7 @@ export default {
 
 }
 .status-on {
-  @apply bg-sky-500
+  @apply bg-green-500
 }
 .status-off {
   @apply bg-[#C7C7C7]
