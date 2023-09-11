@@ -13,6 +13,10 @@ export default {
   getRebootCounter(params) {
     return apiClient.get('device/rebootCounter',{ params })
   },
+
+  getDuplicate(params) {
+    return apiClient.get('device/duplicate',{ params })
+  },
   getAirioRealtimeData(params) {
     return apiClient.get('airio-device/realtimeData',{ params })
   },
