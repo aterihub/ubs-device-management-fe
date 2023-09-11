@@ -20,6 +20,7 @@ export const useDataStore = defineStore('data', {
       { machine_name: 'R826', device_id: 'C8C9A3CC371C' }
     ],
     rebootCounter: ref('-'),
+    duplicateData: ref([]),
     rpmDuplicate: ref([]),
     runMesinDuplicate: ref([]),
     inputBarangDuplicate: ref([]),
@@ -57,7 +58,7 @@ export const useDataStore = defineStore('data', {
         if (this.onlineDevices.length != 0) {
           this.onlineDevices.map((data, index) => {
             this.onlineDevices[index].uptime = data.uptime / 60
-            this.offlineDevices[index].last_heard = new Date(data.last_heard).toLocaleString()
+            this.onlineDevices[index].last_heard = new Date(data.last_heard).toLocaleString()
           })
         }
         this.isLoading = false
@@ -190,6 +191,9 @@ export const useDataStore = defineStore('data', {
       try {
         const res = await dataAPI.getRebootCounter(params)
         this.rebootCounter = res.data.data.count
+        res.data.data.detail.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+        })
         this.rebootDetail = res.data.data.detail
         this.isLoading = false
         this.status.isError = false
@@ -213,6 +217,44 @@ export const useDataStore = defineStore('data', {
           data._time = new Date (data._time).toLocaleString()
         })
         this.rebootDetail = res.data.data.detail
+        this.isLoading = false
+        this.status.isError = false
+        this.status.message = res.data.message
+        this.status.code = res.data.status
+      } catch (err) {
+        console.error(err)
+        this.isLoading = false
+        this.status.isError = true
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
+        return err
+      }
+    },
+    async getDuplicate(params) {
+      this.isLoading = true
+      try {
+        const res = await dataAPI.getDuplicate(params)
+        console.log('duplicate',res.data.data)
+        res.data.data.runMesin.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        res.data.data.rpm.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        res.data.data.inputBarang.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        res.data.data.outputBarang.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        this.rpmDuplicate = res.data.data.rpm,
+        this.runMesinDuplicate = res.data.data.runMesin
+        this.inputBarangDuplicate = res.data.data.inputBarang,
+        this.outputBarangDuplicate = res.data.data.outputBarang,
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message

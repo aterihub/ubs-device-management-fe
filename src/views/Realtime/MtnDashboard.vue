@@ -347,7 +347,7 @@ const onlineTableHeader = [
   { text: "Input Sensor", value: "InputBarang", sortable: true },
   { text: "Output Sensor", value: "OutputBarang", sortable: true },
   { text: "Uptime (min)", value: "uptime", sortable: true },
-  { text: "Last Heard", value: "lastHeard", sortable: true },
+  { text: "Last Heard", value: "last_heard", sortable: true },
 ]
   
 const devicesTableHeader = [
