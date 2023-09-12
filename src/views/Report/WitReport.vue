@@ -33,7 +33,7 @@
               <p class="font-semibold">{{ item }}</p>
           </option>
           </select>
-          <select v-model="selectedAirioTray" class="select-option ">
+          <select v-model="selectedTray" class="select-option ">
             <option value="TrayG" selected>Tray G</option>
           </select>
           <select v-model="selectedDevice" class="select-option ">
@@ -157,7 +157,7 @@ import { useRoute } from 'vue-router'
   }
   //dropdown filter
   const selectedFloor = useLocalStorage('airioSelectedFloor','LT2')
-  const selectedAirioTray = useLocalStorage('airioSelectedAirioTray','TrayG')
+  const selectedTray = useLocalStorage('airioSelectedAirioTray','TrayG')
   const selectedDevice = useLocalStorage('airioSelectedDevice','-')
   const startDate = ref(new Date().toLocaleDateString('en-CA'))
   const startTime = useLocalStorage('airioStartTime', '-')
@@ -169,8 +169,8 @@ import { useRoute } from 'vue-router'
     await masterDataStore.getAirioTrays(params)
   })
 
-  watch(() => selectedAirioTray.value, async() => {
-    let params = { tray: selectedAirioTray.value }
+  watch(() => selectedTray.value, async() => {
+    let params = { tray: selectedTray.value }
     await masterDataStore.getAirioDevices(params)
   })
 
@@ -182,7 +182,7 @@ import { useRoute } from 'vue-router'
 
   onMounted( async () => {
     await masterDataStore.getAirioFloors()
-    let params = { tray: selectedAirioTray.value }
+    let params = { tray: selectedTray.value }
     await masterDataStore.getAirioDevices(params)
     if (paramAvailable.value) {
       selectedFloor.value = route.params.floor  
@@ -198,7 +198,7 @@ import { useRoute } from 'vue-router'
       route.params.tray = selectedTray.value
       route.params.device = selectedDevice.value
     }
-    if (selectedFloor.value != '0' && selectedAirioTray.value != '0' && selectedDevice.value != '-' && startTime.value != '' && endTime.value != '') {
+    if (selectedFloor.value != '0' && selectedTray.value != '0' && selectedDevice.value != '-' && startTime.value != '' && endTime.value != '') {
       let params = {
         device: selectedDevice.value,
         start: new Date(startDate.value + 'T' + startTime.value).toISOString(),
