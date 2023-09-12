@@ -22,6 +22,7 @@ export const useMasterDataStore = defineStore('master', {
     floors: useLocalStorage('floors', []),
     trays: useLocalStorage('trays', []),
     mtnDevices: ref([]),
+    mtnDevicesList: useLocalStorage('mtnDevicesList',[]),
     witDevices: ref([]),
     isLoading: ref(false),
     status: ref({
@@ -96,6 +97,7 @@ export const useMasterDataStore = defineStore('master', {
       this.isLoading = true
       try {
         const res = await masterDataAPI.getDevices(tray)
+        this.mtnDevicesList = res.data.data
         this.mtnDevices = []
         res.data.data.map((data) => {
           this.mtnDevices.push({machine_name: data._value, PowerMachine: true, RunMachine: true, RPM: true, InputBarang: true, OutputBarang: true})

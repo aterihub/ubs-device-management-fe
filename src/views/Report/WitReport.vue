@@ -53,7 +53,7 @@
         <h1 class="title font-light">Reboot Counter</h1>
         <h2 class="font-extralight mt-2"> Total Reboot: <span class="pl-2 font-semibold">{{ airioRebootCounter }}</span></h2>
       </div>
-      <SearchField class="outlined" v-model="rebootDetailSearchValue" placeholder="Search by IMEI, variant, device name..."/>
+      <SearchField class="outlined" v-model="rebootDetailSearchValue" placeholder="Search..."/>
       <EasyDataTable
         table-class-name="customize-table"
         :loading="rebootLoading"
@@ -71,7 +71,7 @@
         <h1 class="title font-light"> Data Density</h1>
         <h2 class="font-extralight mt-2"> Expected Data Density: <span class="font-semibold">720 Data / Hour</span></h2>
       </div>
-      <SearchField class="outlined" v-model="dataDensitySearchValue" placeholder="Search by IMEI, variant, device name..."/>
+      <SearchField class="outlined" v-model="dataDensitySearchValue" placeholder="Search..."/>
       <EasyDataTable
         table-class-name="customize-table"
         :loading="densityLoading"
@@ -156,13 +156,13 @@ import { useRoute } from 'vue-router'
     modalActive.value = false
   }
   //dropdown filter
-  const selectedFloor = useLocalStorage('selectedFloor','0')
-  const selectedAirioTray = useLocalStorage('selectedAirioTray','TrayG')
-  const selectedDevice = ref('-')
+  const selectedFloor = useLocalStorage('airioSelectedFloor','LT2')
+  const selectedAirioTray = useLocalStorage('airioSelectedAirioTray','TrayG')
+  const selectedDevice = useLocalStorage('airioSelectedDevice','-')
   const startDate = ref(new Date().toLocaleDateString('en-CA'))
-  const startTime = ref('')
+  const startTime = useLocalStorage('airioStartTime', '-')
   const endDate = ref(new Date().toLocaleDateString('en-CA'))
-  const endTime = ref('')
+  const endTime = useLocalStorage('airioEndTime', '-')
 
   watch(() => selectedFloor.value, async() => {
     let params = { floor: selectedFloor.value }
@@ -230,16 +230,10 @@ import { useRoute } from 'vue-router'
   const rebootDetailSearchValue = ref('')
   const dataDensityHeader = [
     { text: "Date time", value: "_time" },
-    // { text: "Power Mesin", value: "PowerMesin" ,sortable: true},
-    // { text: "Power Mesin Percentage", value: "PowerMesinPercentage" ,sortable: true},
     { text: "Run Mesin", value: "RunMesin", sortable: true },
-    { text: "Run Mesin Percentage", value: "RunMesinPercentage", sortable: true },
     { text: "RPM", value: "RPM", sortable: true },
-    { text: "RPM Percentage", value: "RPMPercentage", sortable: true },
     { text: "Input Sensor", value: "InputBarang", sortable: true },
-    { text: "Input Sensor Percentage", value: "InputBarangPercentage", sortable: true },
     { text: "Output Sensor", value: "OutputBarang", sortable: true },
-    { text: "Output Sensor Percentage", value: "OutputBarangPercentage", sortable: true },
   ]
   const rebootDetailHeader = [
     { text: "Date time", value: "_time" },

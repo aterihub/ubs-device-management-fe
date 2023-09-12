@@ -65,7 +65,7 @@
         <div class="table-header">
           <h1 class="title"> Offline Devices</h1>
         </div>
-        <SearchField class="outlined" v-model="offlineTableSearchValue" placeholder="Search by IMEI, variant, device name..."/>
+        <SearchField class="outlined" v-model="offlineTableSearchValue" placeholder="Search..."/>
         <EasyDataTable
         table-class-name="customize-table"
         :loading="loading"
@@ -87,7 +87,7 @@
         <div class="table-header">
           <h1 class="title"> Online Devices</h1>
         </div>
-        <SearchField class="outlined" v-model="onlineTableSearchValue" placeholder="Search by IMEI, variant, device name..."/>
+        <SearchField class="outlined" v-model="onlineTableSearchValue" placeholder="Search..."/>
         <EasyDataTable
         table-class-name="customize-table"
         :loading="loading"
@@ -135,7 +135,7 @@
             <p>- refresh rate 30 detik</p>
           </div>
         </div>
-        <SearchField class="outlined" v-model="offlineTableSearchValue" placeholder="Search by IMEI, variant, device name..."/>
+        <SearchField class="outlined" v-model="offlineTableSearchValue" placeholder="Search..."/>
         <EasyDataTable
           table-class-name="customize-table"
           :loading="loading"

@@ -129,16 +129,11 @@ export const useDataStore = defineStore('data', {
         if (this.dataDensity.length != 0) {
           this.dataDensity.map((data, index) => {
             this.dataDensity[index]._time = new Date(data._time).toLocaleString()
-            this.dataDensity[index].PowerMesin = data.PowerMesin == undefined ? '-' : data.PowerMesin
-            this.dataDensity[index].RunMesin = data.RunMesin == undefined ? '-' : data.RunMesin
-            this.dataDensity[index].RPM = data.RPM == undefined ? '-' : data.RPM
-            this.dataDensity[index].InputBarang = data.InputBarang == undefined ? '-' : data.InputBarang
-            this.dataDensity[index].OutputBarang = data.OutputBarang == undefined ? '-' : data.OutputBarang
-            this.dataDensity[index].PowerMesinPercentage = data.PowerMesin == '-' ? '0%' : ((data.PowerMesin / 720) * 100).toFixed(1).toString() + '%'
-            this.dataDensity[index].RunMesinPercentage = data.RunMesin == '-' ? '0%' : ((data.RunMesin / 720) * 100).toFixed(1).toString() + '%'
-            this.dataDensity[index].RPMPercentage = data.RPM == '-' ? '0%' : ((data.RPM / 720) * 100).toFixed(1).toString() + '%'
-            this.dataDensity[index].InputBarangPercentage = data.InputBarang == '-' ? '0%' : ((data.InputBarang / 720) * 100).toFixed(1).toString() + '%'
-            this.dataDensity[index].OutputBarangPercentage = data.OutputBarang == '-' ? '0%' : ((data.OutputBarang / 720) * 100).toFixed(1).toString() + '%'
+            this.dataDensity[index].PowerMesin = data.PowerMesin == undefined ? '-' : data.PowerMesin + ' (' + ((data.RunMesin/720)*100).toFixed(1) + '%' + ')'
+            this.dataDensity[index].RunMesin = data.RunMesin == undefined ? '-' : data.RunMesin + ' (' + ((data.RunMesin/720)*100).toFixed(1) + '%' + ')'
+            this.dataDensity[index].RPM = data.RPM == undefined ? '-' : data.RPM + ' (' + ((data.RPM/720)*100).toFixed(1) + '%' + ')'
+            this.dataDensity[index].InputBarang = data.InputBarang == undefined ? '-' : data.InputBarang + ' (' + ((data.InputBarang/720)*100).toFixed(1) + '%' + ')'
+            this.dataDensity[index].OutputBarang = data.OutputBarang == undefined ? '-' : data.OutputBarang + ' (' + ((data.OutputBarang/720)*100).toFixed(1) + '%' + ')'
           })
         }
         console.log(this.dataDensity)
@@ -164,16 +159,10 @@ export const useDataStore = defineStore('data', {
         if (this.airioDataDensity.length != 0) {
           this.airioDataDensity.map((data, index) => {
             this.airioDataDensity[index]._time = new Date(data._time).toLocaleString()
-            // this.airioDataDensity[index].PowerMesin = data.PowerMesin == undefined ? '-' : data.PowerMesin
-            this.airioDataDensity[index].RunMesin = data.RunMesin == undefined ? '-' : data.RunMesin
-            this.airioDataDensity[index].RPM = data.RPM == undefined ? '-' : data.RPM
-            this.airioDataDensity[index].InputBarang = data.InputBarang == undefined ? '-' : data.InputBarang
-            this.airioDataDensity[index].OutputBarang = data.OutputBarang == undefined ? '-' : data.OutputBarang
-            // this.airioDataDensity[index].PowerMesinPercentage = data.PowerMesin == '-' ? '0%' : Math.floor((data.PowerMesin/720)*100).toFixed(1).toString() + '%'
-            this.airioDataDensity[index].RunMesinPercentage = data.RunMesin == '-' ? '0%' : ((data.RunMesin / 720) * 100).toFixed(1).toString() + '%'
-            this.airioDataDensity[index].RPMPercentage = data.RPM == '-' ? '0%' : ((data.RPM / 720) * 100).toFixed(1).toString() + '%'
-            this.airioDataDensity[index].InputBarangPercentage = data.InputBarang == '-' ? '0%' : ((data.InputBarang / 720) * 100).toFixed(1).toString() + '%'
-            this.airioDataDensity[index].OutputBarangPercentage = data.OutputBarang == '-' ? '0%' : ((data.OutputBarang / 720) * 100).toFixed(1).toString() + '%'
+            this.airioDataDensity[index].RunMesin = data.RunMesin == undefined ? '-' : data.RunMesin + ' (' + ((data.RunMesin/720)*100).toFixed(1) + '%' + ')'
+            this.airioDataDensity[index].RPM = data.RPM == undefined ? '-' : data.RPM + ' (' + ((data.RPM/720)*100).toFixed(1) + '%' + ')'
+            this.airioDataDensity[index].InputBarang = data.InputBarang == undefined ? '-' : data.InputBarang + ' (' + ((data.InputBarang/720)*100).toFixed(1) + '%' + ')'
+            this.airioDataDensity[index].OutputBarang = data.OutputBarang == undefined ? '-' : data.OutputBarang + ' (' + ((data.OutputBarang/720)*100).toFixed(1) + '%' + ')'
           })
         }
         console.log(this.airioDataDensity)
@@ -239,19 +228,19 @@ export const useDataStore = defineStore('data', {
         const res = await dataAPI.getDuplicate(params)
         res.data.data.runMesin.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         res.data.data.rpm.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         res.data.data.inputBarang.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         res.data.data.outputBarang.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
 
         this.duplicateData = pivotArray.pivotArray(res.data.data)
@@ -276,19 +265,19 @@ export const useDataStore = defineStore('data', {
         const res = await dataAPI.getAirioDuplicate(params)
         res.data.data.runMesin.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         res.data.data.rpm.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         res.data.data.inputBarang.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         res.data.data.outputBarang.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         this.airioDuplicateData = pivotArray.airioPivotArray(res.data.data)
         console.log(this.airioDuplicateData)
@@ -311,19 +300,19 @@ export const useDataStore = defineStore('data', {
         const res = await dataAPI.getAirioMissingData(params)
         res.data.data.runMesin.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         res.data.data.rpm.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         res.data.data.inputBarang.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         res.data.data.outputBarang.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
-          data._value = data._value
+          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         this.airioMissingData = pivotArray.airioPivotArray(res.data.data)
         console.log(this.airioMissingData)
