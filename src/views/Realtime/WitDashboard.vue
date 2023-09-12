@@ -24,28 +24,50 @@
         </form>
         <h1>Last Update: <span class="pl-2 font-semibold">{{ lastUpdate }}</span></h1>
       </div>
-      <div class="grid grid-cols-2 sm:grid-cols-4 w-full gap-10">
-        <div class="card border border-[#57C09B] col-span-3" >
+      <div class="grid grid-cols-2 sm:grid-cols-6 w-full gap-10">
+        <div class="card border border-[#57C09B] col-span-5" >
           <div class="mb-10 gap-2 flex flex-col">
             <h1 class="font-bold text-3xl">{{realtimeDevicesStatus.online}}/{{realtimeDevicesStatus.total}}</h1>
             <h2 class="text-xl">Online Devices</h2>
           </div>
-          <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 w-full gap-2">
+          <div class="grid grid-cols-2 mb-10">
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#57C09B] px-4 py-2 w-full">
-              <p class="text-xs md:text-sm lg:text-base">Normal</p>
-              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.normal}} machines</p>
+              <p class="text-xs md:text-sm lg:text-base">Running</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.running}} machines</p>
             </div>
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#5DA3EE] px-4 py-2 w-full">
-              <p class="text-xs md:text-sm lg:text-base">Idle</p>
-              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.idle}} machines</p>
+                <p class="text-xs md:text-sm lg:text-base">Idle</p>
+                <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.idle}} machines</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 w-full gap-6">
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">All Sensor Error</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.rpmDataErrorAllSensorAreUnreadable}} machines</p>
             </div>
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
-              <p class="text-xs md:text-sm lg:text-base">Sensor Broken</p>
-              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.faultySensors}} machines</p>
+              <p class="text-xs md:text-sm lg:text-base">Input and Output Sensor Error  </p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.allSensorAreUnreadable}} machines</p>
             </div>
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
-              <p class="text-xs md:text-sm lg:text-base">No Sensor Data</p>
-              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.unreadbleSensors}} machines</p>
+              <p class="text-xs md:text-sm lg:text-base">RPM and Input Sensor Error</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.rpmDataErrorInputUnreadable}} machines</p>
+            </div>
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">RPM and Output Sensor Error </p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.rpmDataErrorOutputUnreadable}} machines</p>
+            </div>
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">RPM Error </p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.rpmDataError}} machines</p>
+            </div>
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">Input Sensor Error </p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.inputUnreadable}} machines</p>
+            </div>
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">Output Sensor Error / Start Process </p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.outPutUnreadableStartProcess}} machines</p>
             </div>
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
               <p class="text-xs md:text-sm lg:text-base">Undefined</p>
@@ -55,7 +77,7 @@
         </div>
         <div class="card border border-[#E63946] w-full justify-center items-center col-span-1" >
             <h1 class="font-bold text-3xl mb-6">{{realtimeDevicesStatus.offline}}/{{realtimeDevicesStatus.total}}</h1>
-            <h2 class="text-xl">Offline Devices</h2>
+            <h2 class="text-xl text-center">Offline Devices</h2>
         </div>
       </div>
       <div class="table-wrap">
