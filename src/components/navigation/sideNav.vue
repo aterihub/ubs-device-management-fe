@@ -1,8 +1,17 @@
 <template>
   <div class="topbar">
     <div class="grid grid-flow-col gap-4 items-center">
-      <img src="@/assets/img/blue-logogram.png" alt="blue-logogram" class="w-[36px]">
-      <!-- <img src="@/assets/img/blue-logogram.png" alt="blue-logogram" class="w-[143px]"> -->
+      <img src="@/assets/img/blue-logogram.png" alt="blue-logogram" class="w-[36px] mr-6">
+      <div class="grid grid-cols-2 gap-6">
+        <div class="flex gap-2 justify-between items-center">
+          <Indicator :status="servicesStatus.mtnService"/>
+          <p class="font-semibold">MTN Parser Service</p>
+        </div>
+        <div class="flex gap-2 justify-between items-center">
+          <Indicator :status="servicesStatus.witService"/>
+          <p class="font-semibold">WIT Parser Service</p>
+        </div>
+      </div>
     </div>
     <h1 class="font-bold text-2xl">UBS SCADA Devices Management</h1>
   </div>
@@ -20,9 +29,30 @@
 </template>
 
 <script setup>
+import Indicator from '@/components/Indicator.vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import sideNavIcon from '@/components/navigation/sideNavIcon.vue'
-  
+import { useDataStore } from '@/stores/DataStore'
+import { onMounted, onUnmounted, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+
+let whileState = true
+const dataStore = useDataStore()
+const { servicesStatus } = storeToRefs(useDataStore())
+const delay = require('delay')
+
+onMounted(async() => {
+  while(whileState) {
+    await dataStore.getServiceStatus()
+    await delay(3000)
+  }
+})
+
+onUnmounted(() => {
+  whileState = false
+})
+
+
 const props = defineProps({
   isReportActive: {
     type: Boolean,

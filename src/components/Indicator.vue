@@ -14,21 +14,21 @@ export default {
   [ 'status' ],
   methods: {
     getIndicatorClass(status) {
-      if (status === 1) {
+      if (status === 1 || status == true) {
         return 'indicator-on';
-      } else if (status === 0) {
+      } else if (status === 0 || status == false) {
         return 'indicator-off';
-      } else if (status === -1) {
+      } else if (status === -1 || status == false) {
         return 'indicator-error';
       }
       // You can add more conditions if needed
     },
     getStatusClass(status) {
-      if (status === 1) {
+      if (status === 1 || status == true) {
         return 'status-on';
-      } else if (status === 0) {
+      } else if (status === 0 || status == false) {
         return 'status-off';
-      } else if (status === -1) {
+      } else if (status === -1 || status == false) {
         return 'status-error';
       }
       // You can add more conditions if needed

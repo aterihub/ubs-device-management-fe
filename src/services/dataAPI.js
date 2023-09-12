@@ -31,5 +31,11 @@ export default {
 
   getAirioDuplicate(params) {
     return apiClient.get('airio-device/duplicate',{ params })
+  },
+
+  getServiceStatus() {
+    return apiClient.get('service')
   }
+
+
 }

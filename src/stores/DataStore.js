@@ -6,6 +6,7 @@ import pivotArray from '../composable/pivotArray'
 
 export const useDataStore = defineStore('data', {
   state: () => ({
+    servicesStatus: ref({}),
     airioMachineName: [
       { machine_name: 'R824', device_id: '5443B2A939F8' },
       { machine_name: 'R820', device_id: '5443B2A93A90' },
@@ -251,8 +252,10 @@ export const useDataStore = defineStore('data', {
           data._time = new Date (data._time).toLocaleString()
           data._value = data._value
         })
-        this.duplicateData = pivotArray(res.data.data)
-        console.log(this.duplicateData)
+
+        this.duplicateData = pivotArray.pivotArray(res.data.data)
+        console.log('duplicateData',res.data.data)
+
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message
@@ -286,8 +289,26 @@ export const useDataStore = defineStore('data', {
           data._time = new Date (data._time).toLocaleString()
           data._value = data._value
         })
-        this.airioDuplicateData = pivotArray(res.data.data)
+        this.airioDuplicateData = pivotArray.airioPivotArray(res.data.data)
         console.log(this.airioDuplicateData)
+        this.isLoading = false
+        this.status.isError = false
+        this.status.message = res.data.message
+        this.status.code = res.data.status
+      } catch (err) {
+        console.error(err)
+        this.isLoading = false
+        this.status.isError = true
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
+        return err
+      }
+    },
+    async getServiceStatus() {
+      this.isLoading = true
+      try {
+        const res = await dataAPI.getServiceStatus()
+        this.servicesStatus = res.data.data
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message
