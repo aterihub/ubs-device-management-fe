@@ -101,6 +101,7 @@ export const useDataStore = defineStore('data', {
             const { machine_name } = this.airioMachineName.find((x) => {
               return x.device_id == data.device_id
             })
+            data.InputBarang = !data.InputBarang
             data.machine_name = machine_name
             data.uptime = data.uptime / 60
             data.last_heard = new Date(data.last_heard).toLocaleString()
