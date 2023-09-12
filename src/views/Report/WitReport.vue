@@ -56,7 +56,7 @@
       <SearchField class="outlined" v-model="rebootDetailSearchValue" placeholder="Search by IMEI, variant, device name..."/>
       <EasyDataTable
         table-class-name="customize-table"
-        :loading="loading"
+        :loading="rebootLoading"
         :headers="rebootDetailHeader"
         :items="airioRebootDetail"
         theme-color="#1363df"        
@@ -74,7 +74,7 @@
       <SearchField class="outlined" v-model="dataDensitySearchValue" placeholder="Search by IMEI, variant, device name..."/>
       <EasyDataTable
         table-class-name="customize-table"
-        :loading="loading"
+        :loading="densityLoading"
         :headers="dataDensityHeader"
         :items="airioDataDensity"
         theme-color="#1363df"        
@@ -84,15 +84,30 @@
         >
       </EasyDataTable>
     </div>
-    <div class="table-wrap">
+    <div class="table-wrap mb-10">
       <div class="table-header">
         <h1 class="title font-light"> Data Duplicate</h1>
       </div>
       <EasyDataTable
         table-class-name="customize-table"
-        :loading="loading"
+        :loading="duplicateLoading"
         :headers="duplicateHeader"
         :items="airioDuplicateData"
+        theme-color="#1363df"        
+        header-text-direction="center"
+        body-text-direction="center"
+        >
+      </EasyDataTable>
+    </div>
+    <div class="table-wrap">
+      <div class="table-header">
+        <h1 class="title font-light"> Data Missing</h1>
+      </div>
+      <EasyDataTable
+        table-class-name="customize-table"
+        :loading="missingLoading"
+        :headers="duplicateHeader"
+        :items="airioMissingData"
         theme-color="#1363df"        
         header-text-direction="center"
         body-text-direction="center"
@@ -128,6 +143,10 @@ import { useRoute } from 'vue-router'
   })
 
   const loading = ref(false)
+  const rebootLoading = ref(false)
+  const densityLoading = ref(false)
+  const duplicateLoading = ref(false)
+  const missingLoading = ref(false)
 
   //alert
   const modalActive = ref(false)
@@ -159,7 +178,7 @@ import { useRoute } from 'vue-router'
   const masterDataStore = useMasterDataStore()
   const { floors, trays, witDevices } = storeToRefs(useMasterDataStore())
   const dataStore = useDataStore()
-  const { airioDataDensity, airioRebootCounter, airioRebootDetail, airioDuplicateData } = storeToRefs(useDataStore())
+  const { airioDataDensity, airioRebootCounter, airioRebootDetail, airioDuplicateData, airioMissingData } = storeToRefs(useDataStore())
 
   onMounted( async () => {
     await masterDataStore.getAirioFloors()
@@ -179,16 +198,25 @@ import { useRoute } from 'vue-router'
       route.params.tray = selectedTray.value
       route.params.device = selectedDevice.value
     }
-    if (selectedFloor.value != '0' && selectedAirioTray.value != '0' && selectedDevice.value != '-' && startTime.value != '' && startTime.value != '') {
+    if (selectedFloor.value != '0' && selectedAirioTray.value != '0' && selectedDevice.value != '-' && startTime.value != '' && endTime.value != '') {
       let params = {
         device: selectedDevice.value,
         start: new Date(startDate.value + 'T' + startTime.value).toISOString(),
         stop: new Date(endDate.value + 'T' + endTime.value).toISOString()
       }
       loading.value = true
-      await dataStore.getAirioDataDensity(params)
+      rebootLoading.value = true
+      densityLoading.value = true
+      duplicateLoading.value = true
+      missingLoading.value = true
       await dataStore.getAirioRebootCounter(params)
+      rebootLoading.value = false
+      await dataStore.getAirioDataDensity(params)
+      densityLoading.value = false
       await dataStore.getAirioDuplicate(params)
+      duplicateLoading.value = false
+      await dataStore.getAirioMissingData(params)
+      missingLoading.value = false
       loading.value = false
     } else {
       alertMessage.value = 'Please select time, floor, tray, device first'

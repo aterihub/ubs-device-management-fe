@@ -26,6 +26,7 @@ export const useDataStore = defineStore('data', {
     rebootDetail: ref([]),
     dataDensity: ref([]),
     airioRebootCounter: ref('-'),
+    airioMissingData: ref([]),
     airioDuplicateData: ref([]),
     airioRebootDetail: ref([]),
     airioDataDensity: ref([]),
@@ -291,6 +292,41 @@ export const useDataStore = defineStore('data', {
         })
         this.airioDuplicateData = pivotArray.airioPivotArray(res.data.data)
         console.log(this.airioDuplicateData)
+        this.isLoading = false
+        this.status.isError = false
+        this.status.message = res.data.message
+        this.status.code = res.data.status
+      } catch (err) {
+        console.error(err)
+        this.isLoading = false
+        this.status.isError = true
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
+        return err
+      }
+    },
+    async getAirioMissingData(params) {
+      this.isLoading = true
+      try {
+        const res = await dataAPI.getAirioMissingData(params)
+        res.data.data.runMesin.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        res.data.data.rpm.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        res.data.data.inputBarang.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        res.data.data.outputBarang.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data._value = data._value
+        })
+        this.airioMissingData = pivotArray.airioPivotArray(res.data.data)
+        console.log(this.airioMissingData)
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message

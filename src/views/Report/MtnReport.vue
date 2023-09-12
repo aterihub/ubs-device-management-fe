@@ -59,7 +59,7 @@
       <SearchField class="outlined" v-model="rebootDetailSearchValue" placeholder="Search by IMEI, variant, device name..."/>
       <EasyDataTable
         table-class-name="customize-table"
-        :loading="loading"
+        :loading="rebootLoading"
         :headers="rebootDetailHeader"
         :items="rebootDetail"
         theme-color="#1363df"        
@@ -77,7 +77,7 @@
       <SearchField class="outlined" v-model="dataDensitySearchValue" placeholder="Search by IMEI, variant, device name..."/>
       <EasyDataTable
         table-class-name="customize-table"
-        :loading="loading"
+        :loading="densityLoading"
         :headers="dataDensityHeader"
         :items="dataDensity"
         theme-color="#1363df"        
@@ -93,7 +93,7 @@
       </div>
       <EasyDataTable
         table-class-name="customize-table"
-        :loading="loading"
+        :loading="duplicateLoading"
         :headers="duplicateHeader"
         :items="duplicateData"
         theme-color="#1363df"        
@@ -129,7 +129,9 @@ import { useRoute } from 'vue-router'
   })
 
   const loading = ref(false)
-
+  const rebootLoading = ref(false)
+  const densityLoading = ref(false)
+  const duplicateLoading = ref(false)
   //alert
   const modalActive = ref(false)
   const alertMessage = ref('')
@@ -177,16 +179,22 @@ import { useRoute } from 'vue-router'
       route.params.tray = selectedTray.value
       route.params.device = selectedDevice.value
     }
-    if (selectedFloor.value != '0' && selectedTray.value != '0' && selectedDevice.value != '-' && startTime.value != '' && startTime.value != '') {
+    if (selectedFloor.value != '0' && selectedTray.value != '0' && selectedDevice.value != '-' && startTime.value != '' && endTime.value != '') {
       let params = {
         device: selectedDevice.value,
         start: new Date(startDate.value + 'T' + startTime.value).toISOString(),
         stop: new Date(endDate.value + 'T' + endTime.value).toISOString()
       }
       loading.value = true
-      await dataStore.getDataDensity(params)
+      rebootLoading.value = true
+      densityLoading.value = true
+      duplicateLoading.value = true
       await dataStore.getRebootCounter(params)
+      rebootLoading.value = false
+      await dataStore.getDataDensity(params)
+      densityLoading.value = false
       await dataStore.getDuplicate(params)
+      duplicateLoading.value = false
       loading.value = false
     } else {
       alertMessage.value = 'Please select time, floor, tray, device first'

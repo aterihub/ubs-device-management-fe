@@ -11,7 +11,7 @@
       <h1 class="title">Realtime Dashboard</h1>
         <!-- <lazyCard v-if="loading" v-for="card in 4" /> -->
       <div class="flex justify-between">
-        <form @submit.prevent="filterRealtimeData" class="grid grid-cols-5 max-w-2xl gap-4">
+        <form @submit.pritem="filterRealtimeData" class="grid grid-cols-5 max-w-2xl gap-4">
           <select v-model="selectedFloor" class="select-option col-span-2">
             <option value="0" selected>Select Floor</option>
             <option v-for="item in floors" :key="item" :value="item">
@@ -71,11 +71,10 @@
         theme-color="#1363df"        
         :search-value="offlineTableSearchValue"
         header-text-direction="center"
-        @click-row="handleRowClick"
         body-text-direction="center"
         >
           <template #item-detail="item">
-            <div class="cursor-pointer">
+            <div class="cursor-pointer" @click="handleRowClick(item)">
               <p class="text-[#2482E6] hover:text-[#2482E6]/40 font-semibold">See Detail</p>
             </div>
           </template>
@@ -94,11 +93,10 @@
         theme-color="#1363df"        
         :search-value="onlineTableSearchValue"
         header-text-direction="center"
-        @click-row="handleRowClick"
         body-text-direction="center"
         >
           <template #item-detail="item">
-            <div class="cursor-pointer">
+            <div class="cursor-pointer" @click="handleRowClick(item)">
               <p class="text-[#2482E6] hover:text-[#2482E6]/40 font-semibold">See Detail</p>
             </div>
           </template>
@@ -367,10 +365,10 @@ async function exportCSV() {
     devicesSelectedExport.value = []
   }
 }
-function handleRowClick(event) {
+function handleRowClick(item) {
   // Handle row click here
-  router.push({ name: 'quickWitReport', params: { floor: event.floor, tray: event.tray , device: event.device_id } });
-  console.log('Row clicked:', event);
+  router.push({ name: 'quickWitReport', params: { floor: item.floor, tray: item.tray , device: item.device_id } });
+  console.log('Row clicked:', item);
 }
 // async function filterRealtimeData() {
 //   if (selectedFloor.value != '0' && selectedAirioTray.value !='0') {

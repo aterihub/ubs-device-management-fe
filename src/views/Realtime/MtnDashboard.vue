@@ -75,10 +75,9 @@
         :search-value="offlineTableSearchValue"
         header-text-direction="center"
         body-text-direction="center"
-        @click-row="handleRowClick"
         >
           <template #item-detail="item">
-            <div class="cursor-pointer">
+            <div class="cursor-pointer" @click="handleRowClick(item)">
               <p class="text-[#2482E6] hover:text-[#2482E6]/40 font-semibold">See Detail</p>
             </div>
           </template>
@@ -98,10 +97,9 @@
         :search-value="onlineTableSearchValue"
         header-text-direction="center"
         body-text-direction="center"
-        @click-row="handleRowClick"
         >
           <template #item-detail="item">
-            <div class="cursor-pointer">
+            <div class="cursor-pointer" @click="handleRowClick(item)">
               <p class="text-[#2482E6] hover:text-[#2482E6]/40 font-semibold">See Detail</p>
             </div>
           </template>
@@ -387,10 +385,10 @@ async function exportCSV() {
   }
 }
 
-function handleRowClick(event) {
+function handleRowClick(item) {
   // Handle row click here
-  router.push({ name: 'quickMtnReport', params: { floor: event.floor, tray: event.tray , device: event.machine_name } });
-  console.log('Row clicked:', event);
+  router.push({ name: 'quickMtnReport', params: { floor: item.floor, tray: item.tray , device: item.machine_name } });
+  console.log('Row clicked:', item);
 }
 
 // async function filterRealtimeData() {

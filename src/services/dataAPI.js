@@ -33,6 +33,10 @@ export default {
     return apiClient.get('airio-device/duplicate',{ params })
   },
 
+  getAirioMissingData(params) {
+    return apiClient.get('airio-device/missing',{ params })
+  },
+
   getServiceStatus() {
     return apiClient.get('service')
   }
