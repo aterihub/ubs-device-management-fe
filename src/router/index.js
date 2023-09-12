@@ -4,6 +4,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 // import LoginForm from '@/views/Auth/LoginFormNew.vue'
 import MainReport from '@/views/Report/MainReport.vue'
 import WitReport from '@/views/Report/WitReport.vue'
+import quickWitReport from '@/views/Report/WitReport.vue'
+import quickMtnReport from '@/views/Report/MtnReport.vue'
 import MtnReport from '@/views/Report/MtnReport.vue'
 import MainDashboard from '@/views/Realtime/MainDashboard.vue'
 import MtnDashboard from '@/views/Realtime/MtnDashboard.vue'
@@ -23,6 +25,8 @@ const routes = [
   { path: '/realtime/wit', name: 'WitDashboard', component: WitDashboard, meta: { freeAccess: true, requiresAuth:false }},
   
   { path: '/report', name: 'MainReport', component: MainReport, meta: { freeAccess: true, requiresAuth:false }},
+  { path: '/report/mtn/:floor/:tray/:device', name: 'quickMtnReport', component: quickMtnReport, props: true, meta: { freeAccess: true, requiresAuth:false }},
+  { path: '/report/wit/:floor/:tray/:device', name: 'quickWitReport', component: quickWitReport, props: true, meta: { freeAccess: true, requiresAuth:false }},
   { path: '/report/wit', name: 'WitReport', component: WitReport, meta: { freeAccess: true, requiresAuth:false }},
   { path: '/report/mtn', name: 'MtnReport', component: MtnReport, meta: { freeAccess: true, requiresAuth:false }},
   // { path: '/devices/details/:id', name: 'Device Details', component: DeviceDetails, props: true, meta: { freeAccess: true, requiresAuth:false }},

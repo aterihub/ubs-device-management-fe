@@ -107,12 +107,26 @@
 import sideNav from '@/components/navigation/sideNav.vue'
 import SearchField from '@/components/SearchField.vue'
 import Button from '@/components/button/BaseButton.vue'
-import { onMounted, ref, watch} from 'vue'
+import { onMounted, ref, watch, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDataStore } from '@/stores/DataStore'
 import { useMasterDataStore } from '@/stores/MasterDataStore'
 import { useLocalStorage } from "@vueuse/core"
-  
+import { useRoute } from 'vue-router'
+
+
+  const props = defineProps({
+    floor:String,
+    tray:String,
+    device:String
+  })
+
+  //checking if route has params
+  const route = useRoute()
+  const paramAvailable = computed(() => {
+    return route.params.hasOwnProperty('floor');
+  })
+
   const loading = ref(false)
 
   //alert
@@ -151,11 +165,20 @@ import { useLocalStorage } from "@vueuse/core"
     await masterDataStore.getAirioFloors()
     let params = { tray: selectedAirioTray.value }
     await masterDataStore.getAirioDevices(params)
+    if (paramAvailable.value) {
+      selectedFloor.value = route.params.floor  
+      // selectedTray.value = route.params.tray  
+      selectedDevice.value = route.params.device  
+    }
   })
 
   
-  async function filterData() {
-    console.log()
+  async function filterData() {    
+    if (paramAvailable.value) {
+      route.params.floor = selectedFloor.value
+      route.params.tray = selectedTray.value
+      route.params.device = selectedDevice.value
+    }
     if (selectedFloor.value != '0' && selectedAirioTray.value != '0' && selectedDevice.value != '-' && startTime.value != '' && startTime.value != '') {
       let params = {
         device: selectedDevice.value,
@@ -260,6 +283,10 @@ import { useLocalStorage } from "@vueuse/core"
 }
 input[type="time"]::-webkit-calendar-picker-indicator {
     display: none;
+}
+
+tbody tr:hover {
+  cursor: pointer;
 }
 
   </style>

@@ -75,6 +75,7 @@
         :search-value="offlineTableSearchValue"
         header-text-direction="center"
         body-text-direction="center"
+        @click-row="handleRowClick"
         >
         </EasyDataTable>
       </div>
@@ -92,6 +93,7 @@
         :search-value="onlineTableSearchValue"
         header-text-direction="center"
         body-text-direction="center"
+        @click-row="handleRowClick"
         >
           <template #item-PowerMesin="item">
             <div class="w-full flex justify-center">
@@ -191,6 +193,7 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
 import { useDataStore } from '@/stores/DataStore'
 import lazyCard from '@/components/loading/lazyCard.vue'
 import { useLocalStorage } from "@vueuse/core"
+import router from '@/router'
 
 const devicesSelected = useLocalStorage('mtnDevicesSelected',[])
 const devicesSelectedExport = useLocalStorage('mtnDevicesSelectedExport',[])
@@ -370,6 +373,12 @@ async function exportCSV() {
     devicesSelected.value = mtnDevices.value
     devicesSelectedExport.value = []
   }
+}
+
+function handleRowClick(event) {
+  // Handle row click here
+  router.push({ name: 'quickMtnReport', params: { floor: event.floor, tray: event.tray , device: event.machine_name } });
+  console.log('Row clicked:', event);
 }
 
 // async function filterRealtimeData() {

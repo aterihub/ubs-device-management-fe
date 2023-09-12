@@ -110,11 +110,24 @@
 import sideNav from '@/components/navigation/sideNav.vue'
 import SearchField from '@/components/SearchField.vue'
 import Button from '@/components/button/BaseButton.vue'
-import { onMounted, ref, watch} from 'vue'
+import { computed, onMounted, ref, watch} from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDataStore } from '@/stores/DataStore'
 import { useMasterDataStore } from '@/stores/MasterDataStore'
-  
+import { useRoute } from 'vue-router'
+
+  const props = defineProps({
+    floor:String,
+    tray:String,
+    device:String
+  })
+
+  //checking if route has params
+  const route = useRoute()
+  const paramAvailable = computed(() => {
+    return route.params.hasOwnProperty('floor');
+  })
+
   const loading = ref(false)
 
   //alert
@@ -150,11 +163,20 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
 
   onMounted( async () => {
     await masterDataStore.getFloors()
+    if (paramAvailable.value) {
+      selectedFloor.value = route.params.floor  
+      selectedTray.value = route.params.tray  
+      selectedDevice.value = route.params.device  
+    }
   })
 
   
   async function filterData() {
-    console.log()
+    if (paramAvailable.value) {
+      route.params.floor = selectedFloor.value
+      route.params.tray = selectedTray.value
+      route.params.device = selectedDevice.value
+    }
     if (selectedFloor.value != '0' && selectedTray.value != '0' && selectedDevice.value != '-' && startTime.value != '' && startTime.value != '') {
       let params = {
         device: selectedDevice.value,
@@ -261,5 +283,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     display: none;
 }
 
+tbody tr:hover {
+  cursor: pointer;
+}
   </style>
   

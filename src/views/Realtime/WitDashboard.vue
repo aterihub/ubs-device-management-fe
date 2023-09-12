@@ -71,6 +71,7 @@
         theme-color="#1363df"        
         :search-value="offlineTableSearchValue"
         header-text-direction="center"
+        @click-row="handleRowClick"
         body-text-direction="center"
         >
         </EasyDataTable>
@@ -88,6 +89,7 @@
         theme-color="#1363df"        
         :search-value="onlineTableSearchValue"
         header-text-direction="center"
+        @click-row="handleRowClick"
         body-text-direction="center"
         >
           <template #item-PowerMesin="item">
@@ -187,6 +189,7 @@ import { useMasterDataStore } from '@/stores/MasterDataStore'
 import { useDataStore } from '@/stores/DataStore'
 import lazyCard from '@/components/loading/lazyCard.vue'
 import { useLocalStorage } from "@vueuse/core"
+import router from '@/router'
 
 const devicesSelected = useLocalStorage('witDevicesSelected',[])
 const devicesSelectedExport = useLocalStorage('witDevicesSelectedExport',[])
@@ -352,7 +355,11 @@ async function exportCSV() {
     devicesSelectedExport.value = []
   }
 }
-
+function handleRowClick(event) {
+  // Handle row click here
+  router.push({ name: 'quickWitReport', params: { floor: event.floor, tray: event.tray , device: event.device_id } });
+  console.log('Row clicked:', event);
+}
 // async function filterRealtimeData() {
 //   if (selectedFloor.value != '0' && selectedAirioTray.value !='0') {
 //     realtimeDataParams.value.floor = selectedFloor.value
