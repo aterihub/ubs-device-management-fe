@@ -74,6 +74,11 @@
         @click-row="handleRowClick"
         body-text-direction="center"
         >
+          <template #item-detail="item">
+            <div class="cursor-pointer">
+              <p class="text-[#2482E6] hover:text-[#2482E6]/40 font-semibold">See Detail</p>
+            </div>
+          </template>
         </EasyDataTable>
       </div>
       <div class="table-wrap">
@@ -92,6 +97,11 @@
         @click-row="handleRowClick"
         body-text-direction="center"
         >
+          <template #item-detail="item">
+            <div class="cursor-pointer">
+              <p class="text-[#2482E6] hover:text-[#2482E6]/40 font-semibold">See Detail</p>
+            </div>
+          </template>
           <template #item-PowerMesin="item">
             <div class="w-full flex justify-center">
               <Indicator :status="item.PowerMesin"/>
@@ -319,6 +329,7 @@ const offlineTableHeader = [
   { text: "Device ID", value: "device_id" },
   { text: "Error Description", value: "message"},
   { text: "Last Heard", value: "last_heard", sortable: true },
+  { text: "", value: "detail"},
 ]
 const onlineTableHeader = [
   { text: "Machine Name", value: "machine_name" },
@@ -332,6 +343,7 @@ const onlineTableHeader = [
   { text: "Output Sensor", value: "OutputBarang", sortable: true },
   { text: "Uptime (min)", value: "uptime", sortable: true },
   { text: "Last Heard", value: "last_heard", sortable: true },
+  { text: "", value: "detail"},
 ]
   
 const devicesTableHeader = [
@@ -439,4 +451,6 @@ function handleRowClick(event) {
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
   @apply transition-all
 }
+
+
   </style>
