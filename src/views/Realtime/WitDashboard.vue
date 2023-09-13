@@ -36,11 +36,11 @@
               <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.running}} machines</p>
             </div>
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#5DA3EE] px-4 py-2 w-full">
-                <p class="text-xs md:text-sm lg:text-base">Idle</p>
-                <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.idle}} machines</p>
-              </div>
+              <p class="text-xs md:text-sm lg:text-base">Idle</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.idle}} machines</p>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 w-full gap-6">
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 w-full gap-6">
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
               <p class="text-xs md:text-sm lg:text-base">All Sensor Error</p>
               <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.rpmDataErrorAllSensorAreUnreadable}} machines</p>
@@ -144,7 +144,7 @@
           </template>
         </EasyDataTable>
       </div>
-      <div class="table-wrap">
+      <div class="table-wrap invisible">
         <div class="table-header">
           <h1 class="title"> Devices Actual Check</h1>
           <div class="text-left">
@@ -158,7 +158,7 @@
           table-class-name="customize-table"
           :loading="loading"
           :headers="devicesTableHeader"
-          :items="devicesSelected"
+          :items="witDevicesSelected"
           theme-color="#1363df"        
           :search-value="offlineTableSearchValue"
           show-index
@@ -221,19 +221,19 @@ import lazyCard from '@/components/loading/lazyCard.vue'
 import { useLocalStorage } from "@vueuse/core"
 import router from '@/router'
 
-const devicesSelected = useLocalStorage('witDevicesSelected',[])
-const devicesSelectedExport = useLocalStorage('witDevicesSelectedExport',[])
+const witDevicesSelected = useLocalStorage('witDevicesSelected',[])
+const witDevicesSelectedExport = useLocalStorage('witDevicesSelectedExport',[])
 
 function updateDevicesSelected(item) {
-  devicesSelected.value[item.index-1] = item
-  devicesSelectedExport.value[item.index-1] = item
-  delete devicesSelectedExport.value[item.index-1].key
-  delete devicesSelectedExport.value[item.index-1].index
-  console.log(devicesSelectedExport.value)
-  if (item.RunMachine == true && item.PowerMachine == true && item.RPM == true && item.InputBarang == true && item.OutputBarang == true) {
+  witDevicesSelected.value[item.index-1] = item
+  witDevicesSelectedExport.value[item.index-1] = item
+  delete witDevicesSelectedExport.value[item.index-1].key
+  delete witDevicesSelectedExport.value[item.index-1].index
+  console.log(witDevicesSelectedExport.value)
+  if (item.RunMachine == true && item.RPM == true && item.InputBarang == true && item.OutputBarang == true) {
     console.log('all true')
-    devicesSelectedExport.value = devicesSelectedExport.value.filter(obj => obj.machine_name !== item.machine_name)
-    console.log(devicesSelectedExport.value)
+    // witDevicesSelectedExport.value = witDevicesSelectedExport.value.filter(obj => obj.machine_name !== item.machine_name)
+    console.log(witDevicesSelectedExport.value)
   } 
 }
 
@@ -269,7 +269,7 @@ const loading = ref(false)
 
 watch(() => witDevices.value, () => {
   if (localStorage.getItem('witDevicesSelected') == "[]") {
-    devicesSelected.value = witDevices.value
+    witDevicesSelected.value = witDevices.value
   } 
 })
 //alert
@@ -376,15 +376,15 @@ const devicesTableHeader = [
 ]
     
 async function exportCSV() {
-  if (devicesSelected.value.length == 0) {
+  if (witDevicesSelectedExport.value.length == 0) {
     alertMessage.value = 'Check the device first'
     isError.value = true
     modalActive.value = true
     setTimeout(closeNotification, 3000)
   } else {
     await delay(2000)
-    devicesSelected.value = witDevices.value
-    devicesSelectedExport.value = []
+    witDevicesSelected.value = witDevices.value
+    witDevicesSelectedExport.value = []
   }
 }
 function handleRowClick(item) {
