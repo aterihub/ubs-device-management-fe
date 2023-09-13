@@ -70,6 +70,12 @@
       <div class="table-header">
         <h1 class="title font-light"> Data Density</h1>
         <h2 class="font-extralight mt-2"> Expected Data Density: <span class="font-semibold">720 Data / Hour</span></h2>
+        <div class="flex gap-4">
+          <h2 class="font-extralight mt-2"> Average Run Mesin: <span class="font-semibold">{{airioDataDensityAverage.averageRunMesin}} ({{((airioDataDensityAverage.averageRunMesin/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average RPM: <span class="font-semibold">{{airioDataDensityAverage.averageRPM}} ({{((airioDataDensityAverage.averageRPM/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Input Sensor: <span class="font-semibold">{{airioDataDensityAverage.averageInputBarang}} ({{((airioDataDensityAverage.averageInputBarang/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Output Sensor: <span class="font-semibold">{{airioDataDensityAverage.averageOutputBarang}} ({{((airioDataDensityAverage.averageOutputBarang/720)*100).toFixed(1)}}%)</span></h2>
+        </div>
       </div>
       <SearchField class="outlined" v-model="dataDensitySearchValue" placeholder="Search..."/>
       <EasyDataTable
@@ -87,6 +93,12 @@
     <div class="table-wrap mb-10">
       <div class="table-header">
         <h1 class="title font-light"> Data Duplicate</h1>
+        <div class="flex gap-4">
+          <h2 class="font-extralight mt-2"> Average Run Mesin: <span class="font-semibold">{{airioDataDuplicateAverage.averageRunMesin}} ({{((airioDataDuplicateAverage.averageRunMesin/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average RPM: <span class="font-semibold">{{airioDataDuplicateAverage.averageRPM}} ({{((airioDataDuplicateAverage.averageRPM/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Input Sensor: <span class="font-semibold">{{airioDataDuplicateAverage.averageInputBarang}} ({{((airioDataDuplicateAverage.averageInputBarang/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Output Sensor: <span class="font-semibold">{{airioDataDuplicateAverage.averageOutputBarang}} ({{((airioDataDuplicateAverage.averageOutputBarang/720)*100).toFixed(1)}}%)</span></h2>
+        </div>
       </div>
       <EasyDataTable
         table-class-name="customize-table"
@@ -102,6 +114,12 @@
     <div class="table-wrap mb-10">
       <div class="table-header">
         <h1 class="title font-light"> Data Missing</h1>
+        <div class="flex gap-4">
+          <h2 class="font-extralight mt-2"> Average Run Mesin: <span class="font-semibold">{{airioMissingDataAverage.averageRunMesin}} ({{((airioMissingDataAverage.averageRunMesin/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average RPM: <span class="font-semibold">{{airioMissingDataAverage.averageRPM}} ({{((airioMissingDataAverage.averageRPM/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Input Sensor: <span class="font-semibold">{{airioMissingDataAverage.averageInputBarang}} ({{((airioMissingDataAverage.averageInputBarang/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Output Sensor: <span class="font-semibold">{{airioMissingDataAverage.averageOutputBarang}} ({{((airioMissingDataAverage.averageOutputBarang/720)*100).toFixed(1)}}%)</span></h2>
+        </div>
       </div>
       <EasyDataTable
         table-class-name="customize-table"
@@ -117,6 +135,12 @@
     <div class="table-wrap">
       <div class="table-header">
         <h1 class="title font-light"> Cleansed Data</h1>
+        <div class="flex gap-4">
+          <h2 class="font-extralight mt-2"> Average Run Mesin: <span class="font-semibold">{{airioAverageCleanData.averageRunMesin}} ({{((airioAverageCleanData.averageRunMesin/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average RPM: <span class="font-semibold">{{airioAverageCleanData.averageRPM}} ({{((airioAverageCleanData.averageRPM/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Input Sensor: <span class="font-semibold">{{airioAverageCleanData.averageInputBarang}} ({{((airioAverageCleanData.averageInputBarang/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Output Sensor: <span class="font-semibold">{{airioAverageCleanData.averageOutputBarang}} ({{((airioAverageCleanData.averageOutputBarang/720)*100).toFixed(1)}}%)</span></h2>
+        </div>
       </div>
       <EasyDataTable
         table-class-name="customize-table"
@@ -143,6 +167,7 @@ import { useDataStore } from '@/stores/DataStore'
 import { useMasterDataStore } from '@/stores/MasterDataStore'
 import { useLocalStorage } from "@vueuse/core"
 import { useRoute } from 'vue-router'
+import averageArray from '@/composable/averageArray'
 
 
   const props = defineProps({
@@ -164,6 +189,7 @@ import { useRoute } from 'vue-router'
   const missingLoading = ref(false)
   const cleanLoading = ref(false)
   const airioCleanData = ref([])
+  const airioAverageCleanData = ref({averageRPM: '-', averageRunMesin: '-', averageInputBarang: '-', averageOutputBarang: '-'})
 
   //alert
   const modalActive = ref(false)
@@ -195,7 +221,7 @@ import { useRoute } from 'vue-router'
   const masterDataStore = useMasterDataStore()
   const { floors, trays, witDevices } = storeToRefs(useMasterDataStore())
   const dataStore = useDataStore()
-  const { airioDataDensity, airioRebootCounter, airioRebootDetail, airioDuplicateData, airioMissingData, airioRawDataDensity, airioRawDuplicateData } = storeToRefs(useDataStore())
+  const { airioDataDensity, airioRebootCounter, airioRebootDetail, airioDuplicateData, airioMissingData, airioRawDataDensity, airioRawDuplicateData, airioDataDensityAverage, airioDataDuplicateAverage, airioMissingDataAverage } = storeToRefs(useDataStore())
 
   onMounted( async () => {
     await masterDataStore.getAirioFloors()
@@ -236,7 +262,10 @@ import { useRoute } from 'vue-router'
       await dataStore.getAirioMissingData(params)
       missingLoading.value = false
       await dataStore.getAirioCleanData(params)
-      airioCleanData.value = await calculateCleanData(airioRawDataDensity.value, airioRawDuplicateData.value)
+      if (airioRawDataDensity.value.length != 0 && airioRawDuplicateData.value.length != 0) {
+        airioCleanData.value = await calculateCleanData(airioRawDataDensity.value, airioRawDuplicateData.value)
+        airioAverageCleanData.value = averageArray.averageAirioDensity(calculateCleanDataForAverage(airioRawDataDensity.value, airioRawDuplicateData.value))
+      }
       cleanLoading.value = false
       loading.value = false
     } else {
@@ -260,6 +289,22 @@ import { useRoute } from 'vue-router'
     })
     return newArray
   }
+
+  
+  function calculateCleanDataForAverage(density, duplicate) {
+    const newArray = density.map((item1, index) => {
+      const item2 = duplicate[index] 
+        return {
+          _time: new Date (item1._time).toLocaleString(),
+          RunMesin: item1.RunMesin - item2.runMesin,
+          RPM: item1.RPM - item2.rpm,
+          InputBarang: item1.InputBarang - item2.inputBarang,
+          OutputBarang: item1.OutputBarang - item2.outputBarang,
+        }
+    })
+    return newArray
+  }
+
   const dataDensitySearchValue = ref('')
   const rebootDetailSearchValue = ref('')
   const dataDensityHeader = [

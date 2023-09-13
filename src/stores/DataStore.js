@@ -3,6 +3,7 @@ import dataAPI from '@/services/dataAPI'
 import { computed, ref } from 'vue'
 import { useLocalStorage } from "@vueuse/core"
 import pivotArray from '../composable/pivotArray'
+import averageArray from '../composable/averageArray'
 
 export const useDataStore = defineStore('data', {
   state: () => ({
@@ -23,7 +24,9 @@ export const useDataStore = defineStore('data', {
     ],
     rebootCounter: ref('-'),
     duplicateData: ref([]),
+    dataDuplicateAverage: ref({averageRPM: '-', averagePowerMesin: '-', averageRunMesin: '-', averageInputBarang: '-', averageOutputBarang: '-'}),
     dataDensity: ref([]),
+    dataDensityAverage: ref({averageRPM: '-', averagePowerMesin: '-', averageRunMesin: '-', averageInputBarang: '-', averageOutputBarang: '-'}),
     rawDuplicateData: ref([]),
     rawDataDensity: ref([]),
     rebootDetail: ref([]),
@@ -31,9 +34,12 @@ export const useDataStore = defineStore('data', {
     airioRawDataDensity: ref([]),
     airioRebootCounter: ref('-'),
     airioMissingData: ref([]),
+    airioMissingDataAverage: ref({averageRPM: '-', averageRunMesin: '-', averageInputBarang: '-', averageOutputBarang: '-'}),
     airioDuplicateData: ref([]),
+    airioDataDuplicateAverage: ref({averageRPM: '-', averageRunMesin: '-', averageInputBarang: '-', averageOutputBarang: '-'}),
     airioRebootDetail: ref([]),
     airioDataDensity: ref([]),
+    airioDataDensityAverage: ref({averageRPM: '-', averageRunMesin: '-', averageInputBarang: '-', averageOutputBarang: '-'}),
     realtimeData: ref([]),
     offlineDevices: ref([]),
     onlineDevices: ref([]),
@@ -127,6 +133,7 @@ export const useDataStore = defineStore('data', {
       try {
         const res = await dataAPI.getDataDensity(params)
         this.isLoading = false
+        this.dataDensityAverage = averageArray.averageDensity(res.data.data)
         this.dataDensity = res.data.data
         if (this.dataDensity.length != 0) {
           this.dataDensity.forEach((data, index) => {
@@ -155,6 +162,7 @@ export const useDataStore = defineStore('data', {
       try {
         const res = await dataAPI.getAirioDataDensity(params)
         this.isLoading = false
+        this.airioDataDensityAverage = averageArray.averageAirioDensity(res.data.data)
         this.airioDataDensity = res.data.data
         if (this.airioDataDensity.length != 0) {
           this.airioDataDensity.map((data, index) => {
@@ -225,6 +233,7 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getDuplicate(params)
+        this.dataDuplicateAverage = averageArray.averageDuplicate(pivotArray.pivotArray(res.data.data))
         this.rawDuplicateData = pivotArray.pivotArray(res.data.data)
         this.duplicateData = pivotArray.pivotArray(res.data.data)
         this.duplicateData.forEach((data) => {
@@ -252,6 +261,7 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getAirioDuplicate(params)
+        this.airioDataDuplicateAverage = averageArray.averageAirioDuplicate(pivotArray.airioPivotArray(res.data.data))
         this.airioDuplicateData = pivotArray.airioPivotArray(res.data.data)
         this.airioDuplicateData.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
@@ -277,23 +287,16 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getAirioMissingData(params)
-        res.data.data.runMesin.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
-        res.data.data.rpm.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
-        res.data.data.inputBarang.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
-        res.data.data.outputBarang.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
+        this.airioMissingDataAverage = averageArray.averageAirioDuplicate(pivotArray.airioPivotArray(res.data.data))
         this.airioMissingData = pivotArray.airioPivotArray(res.data.data)
+        this.airioMissingData.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data.runMesin = data.runMesin + ' (' + ((data.runMesin/720)*100).toFixed(1) + '%' + ')'
+          data.rpm = data.rpm + ' (' + ((data.rpm/720)*100).toFixed(1) + '%' + ')'
+          data.inputBarang = data.inputBarang + ' (' + ((data.inputBarang/720)*100).toFixed(1) + '%' + ')'
+          data.outputBarang = data.outputBarang + ' (' + ((data.outputBarang/720)*100).toFixed(1) + '%' + ')'
+        })
+
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message

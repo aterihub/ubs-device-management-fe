@@ -73,6 +73,13 @@
       <div class="table-header">
         <h1 class="title font-light"> Data Density</h1>
         <h2 class="font-extralight mt-2"> Expected Data Density: <span class="font-semibold">720 Data / Hour</span></h2>
+        <div class="flex gap-4">
+          <h2 class="font-extralight mt-2"> Average Power Mesin: <span class="font-semibold">{{dataDensityAverage.averagePowerMesin}} ({{((dataDensityAverage.averagePowerMesin/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Run Mesin: <span class="font-semibold">{{dataDensityAverage.averageRunMesin}} ({{((dataDensityAverage.averageRunMesin/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average RPM: <span class="font-semibold">{{dataDensityAverage.averageRPM}} ({{((dataDensityAverage.averageRPM/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Input Sensor: <span class="font-semibold">{{dataDensityAverage.averageInputBarang}} ({{((dataDensityAverage.averageInputBarang/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Output Sensor: <span class="font-semibold">{{dataDensityAverage.averageOutputBarang}} ({{((dataDensityAverage.averageOutputBarang/720)*100).toFixed(1)}}%)</span></h2>
+        </div>
       </div>
       <SearchField class="outlined" v-model="dataDensitySearchValue" placeholder="Search..."/>
       <EasyDataTable
@@ -90,6 +97,13 @@
     <div class="table-wrap mb-10">
       <div class="table-header">
         <h1 class="title font-light"> Data Duplicate</h1>
+        <div class="flex gap-4">
+          <h2 class="font-extralight mt-2"> Average Power Mesin: <span class="font-semibold">{{dataDuplicateAverage.averagePowerMesin}} ({{((dataDuplicateAverage.averagePowerMesin/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Run Mesin: <span class="font-semibold">{{dataDuplicateAverage.averageRunMesin}} ({{((dataDuplicateAverage.averageRunMesin/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average RPM: <span class="font-semibold">{{dataDuplicateAverage.averageRPM}} ({{((dataDuplicateAverage.averageRPM/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Input Sensor: <span class="font-semibold">{{dataDuplicateAverage.averageInputBarang}} ({{((dataDuplicateAverage.averageInputBarang/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Output Sensor: <span class="font-semibold">{{dataDuplicateAverage.averageOutputBarang}} ({{((dataDuplicateAverage.averageOutputBarang/720)*100).toFixed(1)}}%)</span></h2>
+        </div>
       </div>
       <EasyDataTable
         table-class-name="customize-table"
@@ -105,6 +119,13 @@
     <div class="table-wrap">
       <div class="table-header">
         <h1 class="title font-light"> Cleansed Data</h1>
+        <div class="flex gap-4">
+          <h2 class="font-extralight mt-2"> Average Power Mesin: <span class="font-semibold">{{averageCleanData.averagePowerMesin}} ({{((averageCleanData.averagePowerMesin/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Run Mesin: <span class="font-semibold">{{averageCleanData.averageRunMesin}} ({{((averageCleanData.averageRunMesin/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average RPM: <span class="font-semibold">{{averageCleanData.averageRPM}} ({{((averageCleanData.averageRPM/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Input Sensor: <span class="font-semibold">{{averageCleanData.averageInputBarang}} ({{((averageCleanData.averageInputBarang/720)*100).toFixed(1)}}%)</span></h2>
+          <h2 class="font-extralight mt-2"> Average Output Sensor: <span class="font-semibold">{{averageCleanData.averageOutputBarang}} ({{((averageCleanData.averageOutputBarang/720)*100).toFixed(1)}}%)</span></h2>
+        </div>
       </div>
       <EasyDataTable
         table-class-name="customize-table"
@@ -131,6 +152,7 @@ import { useDataStore } from '@/stores/DataStore'
 import { useMasterDataStore } from '@/stores/MasterDataStore'
 import { useRoute } from 'vue-router'
 import { useLocalStorage } from "@vueuse/core"
+import averageArray from '@/composable/averageArray'
 
   const props = defineProps({
     floor:String,
@@ -150,6 +172,7 @@ import { useLocalStorage } from "@vueuse/core"
   const duplicateLoading = ref(false)
   const cleanLoading = ref(false)
   const cleanData = ref([])
+  const averageCleanData = ref({averageRPM: '-', averagePowerMesin: '-', averageRunMesin: '-', averageInputBarang: '-', averageOutputBarang: '-'})
   //alert
   const modalActive = ref(false)
   const alertMessage = ref('')
@@ -179,7 +202,7 @@ import { useLocalStorage } from "@vueuse/core"
   const masterDataStore = useMasterDataStore()
   const { floors, trays, mtnDevices, mtnDevicesList } = storeToRefs(useMasterDataStore())
   const dataStore = useDataStore()
-  const { dataDensity, rebootCounter, rebootDetail, duplicateData, rawDataDensity, rawDuplicateData} = storeToRefs(useDataStore())
+  const { dataDensity, rebootCounter, rebootDetail, duplicateData, rawDataDensity, rawDuplicateData, dataDensityAverage, dataDuplicateAverage} = storeToRefs(useDataStore())
 
   onMounted( async () => {
     await masterDataStore.getFloors()
@@ -215,7 +238,11 @@ import { useLocalStorage } from "@vueuse/core"
       await dataStore.getDuplicate(params)
       duplicateLoading.value = false
       await dataStore.getCleanData(params)
-      cleanData.value = await calculateCleanData(rawDataDensity.value, rawDuplicateData.value)
+      if (rawDataDensity.value.length != 0 && rawDuplicateData.value.length != 0) {
+        cleanData.value = await calculateCleanData(rawDataDensity.value, rawDuplicateData.value)
+        averageCleanData.value = averageArray.averageDensity(calculateCleanDataForAverage(rawDataDensity.value,rawDuplicateData.value))
+        console.log(averageCleanData.value)
+      }
       cleanLoading.value = false
       loading.value = false
 
@@ -237,6 +264,21 @@ import { useLocalStorage } from "@vueuse/core"
           RPM: (item1.RPM - item2.rpm) + ' (' + (((item1.RPM - item2.rpm)/720)*100).toFixed(1) + '%)',
           InputBarang: (item1.InputBarang - item2.inputBarang) + ' (' + (((item1.InputBarang - item2.inputBarang)/720)*100).toFixed(1) + '%)',
           OutputBarang: (item1.OutputBarang - item2.outputBarang) + ' (' + (((item1.OutputBarang - item2.outputBarang)/720)*100).toFixed(1) + '%)',
+        }
+    })
+    return newArray
+  }
+
+  function calculateCleanDataForAverage(density, duplicate) {
+    const newArray = density.map((item1, index) => {
+      const item2 = duplicate[index] 
+        return {
+          _time: new Date (item1._time).toLocaleString(),
+          PowerMesin: item1.PowerMesin - item2.powerMesin,
+          RunMesin: item1.RunMesin - item2.runMesin,
+          RPM: item1.RPM - item2.rpm,
+          InputBarang: item1.InputBarang - item2.inputBarang,
+          OutputBarang: item1.OutputBarang - item2.outputBarang,
         }
     })
     return newArray
