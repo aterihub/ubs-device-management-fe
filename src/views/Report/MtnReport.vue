@@ -104,7 +104,7 @@
     </div>
     <div class="table-wrap">
       <div class="table-header">
-        <h1 class="title font-light"> Data Clean</h1>
+        <h1 class="title font-light"> Cleansed Data</h1>
       </div>
       <EasyDataTable
         table-class-name="customize-table"
