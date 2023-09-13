@@ -70,6 +70,7 @@ export default {
         const changePivot = pivotedArray.map(x => {
             return {
                 _time: x._time,
+                powerMesin: x.PowerMesin,
                 rpm: x.RPM,
                 runMesin: x.RunMesin,
                 outputBarang: x.InputBarang,

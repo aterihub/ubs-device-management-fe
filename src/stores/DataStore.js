@@ -226,25 +226,16 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getDuplicate(params)
-        res.data.data.runMesin.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
-        res.data.data.rpm.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
-        res.data.data.inputBarang.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
-        res.data.data.outputBarang.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
-
         this.duplicateData = pivotArray.pivotArray(res.data.data)
-        console.log('duplicateData',res.data.data)
+        this.duplicateData.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data.powerMesin = data.powerMesin + ' (' + ((data.powerMesin/720)*100).toFixed(1) + '%' + ')'
+          data.runMesin = data.runMesin + ' (' + ((data.runMesin/720)*100).toFixed(1) + '%' + ')'
+          data.rpm = data.rpm + ' (' + ((data.rpm/720)*100).toFixed(1) + '%' + ')'
+          data.inputBarang = data.inputBarang + ' (' + ((data.inputBarang/720)*100).toFixed(1) + '%' + ')'
+          data.outputBarang = data.outputBarang + ' (' + ((data.outputBarang/720)*100).toFixed(1) + '%' + ')'
+        })
+        console.log('duplicateData',this.duplicateData)
 
         this.isLoading = false
         this.status.isError = false
@@ -263,24 +254,31 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getAirioDuplicate(params)
-        res.data.data.runMesin.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
-        res.data.data.rpm.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
-        res.data.data.inputBarang.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
-        res.data.data.outputBarang.forEach((data) => {
-          data._time = new Date (data._time).toLocaleString()
-          data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        })
+        // res.data.data.runMesin.forEach((data) => {
+        //   data._time = new Date (data._time).toLocaleString()
+        //   data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
+        // })
+        // res.data.data.rpm.forEach((data) => {
+        //   data._time = new Date (data._time).toLocaleString()
+        //   data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
+        // })
+        // res.data.data.inputBarang.forEach((data) => {
+        //   data._time = new Date (data._time).toLocaleString()
+        //   data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
+        // })
+        // res.data.data.outputBarang.forEach((data) => {
+        //   data._time = new Date (data._time).toLocaleString()
+        //   data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
+        // })
         this.airioDuplicateData = pivotArray.airioPivotArray(res.data.data)
-        console.log(this.airioDuplicateData)
+        this.airioDuplicateData.forEach((data) => {
+          data._time = new Date (data._time).toLocaleString()
+          data.runMesin = data.runMesin + ' (' + ((data.runMesin/720)*100).toFixed(1) + '%' + ')'
+          data.rpm = data.rpm + ' (' + ((data.rpm/720)*100).toFixed(1) + '%' + ')'
+          data.inputBarang = data.inputBarang + ' (' + ((data.inputBarang/720)*100).toFixed(1) + '%' + ')'
+          data.outputBarang = data.outputBarang + ' (' + ((data.outputBarang/720)*100).toFixed(1) + '%' + ')'
+        })
+        console.log('dulpicate data', this.airioDuplicateData)
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message

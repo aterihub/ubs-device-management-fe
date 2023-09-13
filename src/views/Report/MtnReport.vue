@@ -222,6 +222,7 @@ import { useLocalStorage } from "@vueuse/core"
   ]
   const duplicateHeader = [
     { text: "Date time", value: "_time" },
+    { text: "Power Mesin", value: "powerMesin" ,sortable: true},
     { text: "Run Machine", value: "runMesin" ,sortable: true},
     { text: "RPM", value: "rpm" ,sortable: true},
     { text: "Input Sensor", value: "inputBarang" ,sortable: true},
