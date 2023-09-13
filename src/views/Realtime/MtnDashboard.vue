@@ -33,26 +33,56 @@
             <h1 class="font-bold text-3xl">{{realtimeDevicesStatus.online}}/{{realtimeDevicesStatus.total}}</h1>
             <h2 class="text-xl">Online Devices</h2>
           </div>
-          <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 w-full gap-2">
+          <div class="grid grid-cols-3 mb-10">
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#57C09B] px-4 py-2 w-full">
-              <p class="text-xs md:text-sm lg:text-base">Normal</p>
-              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.normal}} machines</p>
+              <p class="text-xs md:text-sm lg:text-base">Running</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.running}} machines</p>
             </div>
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#5DA3EE] px-4 py-2 w-full">
               <p class="text-xs md:text-sm lg:text-base">Idle</p>
               <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.idle}} machines</p>
             </div>
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
-              <p class="text-xs md:text-sm lg:text-base">Sensor Broken</p>
-              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.faultySensors}} machines</p>
+              <p class="text-xs md:text-sm lg:text-base">Machine Off</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.machineOff}} machines</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 w-full gap-6">
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">Power Error and Idle </p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.powerErrorIdle}} machines</p>
             </div>
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
-              <p class="text-xs md:text-sm lg:text-base">No Sensor Data</p>
-              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.unreadbleSensors}} machines</p>
+              <p class="text-xs md:text-sm lg:text-base">Power, RPM, Input, Output Error </p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.powerErrorRpmDataErrorAllSensorAreUnreadable}} machines</p>
             </div>
             <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
-              <p class="text-xs md:text-sm lg:text-base">Undefined</p>
-              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.undefined}} machines</p>
+              <p class="text-xs md:text-sm lg:text-base">Power, RPM, Output Error</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.powerErrorRpmDataErrorOutputUnreadable}} machines</p>
+            </div>
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">Power, RPM, Input Error</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.powerErrorRpmDataErrorInputSensorUnreadable}} machines</p>
+            </div>
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">Power, RPM Error</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.powerErrorRpmDataError}} machines</p>
+            </div>
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">Power, Input, Output Error </p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.powerErrorAllSensorAreUnreadable}} machines</p>
+            </div>
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">Power, Output Error / Start Process</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.powerErrorOutputUnreadableStartProcess}} machines</p>
+            </div>
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">Power, Input Error</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.powerErrorInputSensorUnreadable}} machines</p>
+            </div>
+            <div class="flex flex-col justify-between gap-2 border-l-4  border-[#E63946] px-4 py-2 w-full">
+              <p class="text-xs md:text-sm lg:text-base">Power, Error and Running</p>
+              <p class="text-xs md:text-sm lg:text-base font-semibold">{{realtimeDevicesStatus.powerErrorRunning}} machines</p>
             </div>
           </div>
         </div>
@@ -126,7 +156,7 @@
         </EasyDataTable>
       </div>
       
-      <div class="table-wrap">
+      <div class="table-wrap invisible">
         <div class="table-header">
           <h1 class="title"> Devices Actual Check</h1>
           <div class="text-left">
@@ -223,11 +253,11 @@ function updateDevicesSelected(item) {
 
 //dropdown filter
 const selectedFloor = useLocalStorage('selectedFloor','0')
-const selectedTray = useLocalStorage('selectedTray','0')
+const selectedTray = useLocalStorage('selectedTray',null)
 const offlineTableSearchValue = ref('')
 const onlineTableSearchValue = ref('')
 
-const fileName = ref(new Date(Date.now()).toLocaleString() + '_' + selectedTray.value.toString() + '_.csv')
+const fileName = ref('')
 
 //watch selected floor to get tray
 watch(() => selectedFloor.value, async() => {
@@ -257,12 +287,15 @@ const { offlineDevices, onlineDevices } = storeToRefs(useDataStore())
 const loading = ref(false)
 
 watch(() => mtnDevices.value, (oldValue,newValue) => {
-  if (localStorage.getItem('mtnDevicesSelected') == "[]") {
-    devicesSelected.value = mtnDevices.value
-  } 
-  if (newValue.length != 0) {
-    if (oldValue[0].machine_name != newValue[0].machine_name) {
+  if (mtnDevices.value.length != 0) {
+    
+    if (localStorage.getItem('mtnDevicesSelected') == "[]") {
       devicesSelected.value = mtnDevices.value
+    } 
+    if (newValue.length != 0) {
+      if (oldValue[0].machine_name != newValue[0].machine_name) {
+        devicesSelected.value = mtnDevices.value
+      }
     }
   }
 })
@@ -304,7 +337,9 @@ onBeforeMount( async () => {
   await masterDataStore.getFloors()
   selectedFloor.value = floors.value[0]
   let params = { floor: selectedFloor.value }
-  selectedTray.value = null
+  if (localStorage.getItem('selectedTray') != null) {
+    realtimeDataParams.value.tray = selectedTray.value
+  }
   await masterDataStore.getTrays(params)
   masterDataParams.value.tray = selectedTray.value
   while (whileState.value) {
