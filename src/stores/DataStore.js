@@ -23,8 +23,12 @@ export const useDataStore = defineStore('data', {
     ],
     rebootCounter: ref('-'),
     duplicateData: ref([]),
-    rebootDetail: ref([]),
     dataDensity: ref([]),
+    rawDuplicateData: ref([]),
+    rawDataDensity: ref([]),
+    rebootDetail: ref([]),
+    airioRawDuplicateData: ref([]),
+    airioRawDataDensity: ref([]),
     airioRebootCounter: ref('-'),
     airioMissingData: ref([]),
     airioDuplicateData: ref([]),
@@ -46,7 +50,6 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getRealtimeData(params)
-        console.log(res)
         this.realtimeDevicesStatus = res.data.data.counter
         this.realtimeData = res.data.data.data
         this.offlineDevices = this.realtimeData.filter(data => data.status == 'OFFLINE')
@@ -123,11 +126,10 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getDataDensity(params)
-        console.log(res)
         this.isLoading = false
         this.dataDensity = res.data.data
         if (this.dataDensity.length != 0) {
-          this.dataDensity.map((data, index) => {
+          this.dataDensity.forEach((data, index) => {
             this.dataDensity[index]._time = new Date(data._time).toLocaleString()
             this.dataDensity[index].PowerMesin = data.PowerMesin == undefined ? '-' : data.PowerMesin + ' (' + ((data.RunMesin/720)*100).toFixed(1) + '%' + ')'
             this.dataDensity[index].RunMesin = data.RunMesin == undefined ? '-' : data.RunMesin + ' (' + ((data.RunMesin/720)*100).toFixed(1) + '%' + ')'
@@ -136,7 +138,6 @@ export const useDataStore = defineStore('data', {
             this.dataDensity[index].OutputBarang = data.OutputBarang == undefined ? '-' : data.OutputBarang + ' (' + ((data.OutputBarang/720)*100).toFixed(1) + '%' + ')'
           })
         }
-        console.log(this.dataDensity)
         this.status.isError = false
         this.status.message = res.data.message
         this.status.code = res.data.status
@@ -153,7 +154,6 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getAirioDataDensity(params)
-        console.log(res)
         this.isLoading = false
         this.airioDataDensity = res.data.data
         if (this.airioDataDensity.length != 0) {
@@ -165,7 +165,6 @@ export const useDataStore = defineStore('data', {
             this.airioDataDensity[index].OutputBarang = data.OutputBarang == undefined ? '-' : data.OutputBarang + ' (' + ((data.OutputBarang/720)*100).toFixed(1) + '%' + ')'
           })
         }
-        console.log(this.airioDataDensity)
         this.status.isError = false
         this.status.message = res.data.message
         this.status.code = res.data.status
@@ -226,6 +225,7 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getDuplicate(params)
+        this.rawDuplicateData = pivotArray.pivotArray(res.data.data)
         this.duplicateData = pivotArray.pivotArray(res.data.data)
         this.duplicateData.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
@@ -235,8 +235,6 @@ export const useDataStore = defineStore('data', {
           data.inputBarang = data.inputBarang + ' (' + ((data.inputBarang/720)*100).toFixed(1) + '%' + ')'
           data.outputBarang = data.outputBarang + ' (' + ((data.outputBarang/720)*100).toFixed(1) + '%' + ')'
         })
-        console.log('duplicateData',this.duplicateData)
-
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message
@@ -254,22 +252,6 @@ export const useDataStore = defineStore('data', {
       this.isLoading = true
       try {
         const res = await dataAPI.getAirioDuplicate(params)
-        // res.data.data.runMesin.forEach((data) => {
-        //   data._time = new Date (data._time).toLocaleString()
-        //   data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        // })
-        // res.data.data.rpm.forEach((data) => {
-        //   data._time = new Date (data._time).toLocaleString()
-        //   data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        // })
-        // res.data.data.inputBarang.forEach((data) => {
-        //   data._time = new Date (data._time).toLocaleString()
-        //   data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        // })
-        // res.data.data.outputBarang.forEach((data) => {
-        //   data._time = new Date (data._time).toLocaleString()
-        //   data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
-        // })
         this.airioDuplicateData = pivotArray.airioPivotArray(res.data.data)
         this.airioDuplicateData.forEach((data) => {
           data._time = new Date (data._time).toLocaleString()
@@ -278,7 +260,6 @@ export const useDataStore = defineStore('data', {
           data.inputBarang = data.inputBarang + ' (' + ((data.inputBarang/720)*100).toFixed(1) + '%' + ')'
           data.outputBarang = data.outputBarang + ' (' + ((data.outputBarang/720)*100).toFixed(1) + '%' + ')'
         })
-        console.log('dulpicate data', this.airioDuplicateData)
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message
@@ -313,11 +294,50 @@ export const useDataStore = defineStore('data', {
           data._value = data._value + ' (' + ((data._value/720)*100).toFixed(1) + '%' + ')'
         })
         this.airioMissingData = pivotArray.airioPivotArray(res.data.data)
-        console.log(this.airioMissingData)
         this.isLoading = false
         this.status.isError = false
         this.status.message = res.data.message
         this.status.code = res.data.status
+      } catch (err) {
+        console.error(err)
+        this.isLoading = false
+        this.status.isError = true
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
+        return err
+      }
+    },
+    async getCleanData(params) {
+      this.isLoading = true
+      try {
+        const density = await dataAPI.getDataDensity(params)
+        const duplicate = await dataAPI.getDuplicate(params)
+        this.rawDataDensity = density.data.data
+        this.rawDuplicateData = pivotArray.pivotArray(duplicate.data.data)
+        this.isLoading = false
+        this.status.isError = false
+        // this.status.message = res.data.message
+        // this.status.code = res.data.status
+      } catch (err) {
+        console.error(err)
+        this.isLoading = false
+        this.status.isError = true
+        // this.status.message = err.response.data.error
+        // this.status.code = err.response.data.status
+        return err
+      }
+    },
+    async getAirioCleanData(params) {
+      this.isLoading = true
+      try {
+        const density = await dataAPI.getAirioDataDensity(params)
+        const duplicate = await dataAPI.getAirioDuplicate(params)
+        this.airioRawDataDensity = density.data.data
+        this.airioRawDuplicateData = pivotArray.airioPivotArray(duplicate.data.data)
+        this.isLoading = false
+        this.status.isError = false
+        // this.status.message = res.data.message
+        // this.status.code = res.data.status
       } catch (err) {
         console.error(err)
         this.isLoading = false

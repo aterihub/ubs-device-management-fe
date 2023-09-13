@@ -99,7 +99,7 @@
         >
       </EasyDataTable>
     </div>
-    <div class="table-wrap">
+    <div class="table-wrap mb-10">
       <div class="table-header">
         <h1 class="title font-light"> Data Missing</h1>
       </div>
@@ -108,6 +108,21 @@
         :loading="missingLoading"
         :headers="duplicateHeader"
         :items="airioMissingData"
+        theme-color="#1363df"        
+        header-text-direction="center"
+        body-text-direction="center"
+        >
+      </EasyDataTable>
+    </div>
+    <div class="table-wrap">
+      <div class="table-header">
+        <h1 class="title font-light"> Data Clean</h1>
+      </div>
+      <EasyDataTable
+        table-class-name="customize-table"
+        :loading="cleanLoading"
+        :headers="dataDensityHeader"
+        :items="airioCleanData"
         theme-color="#1363df"        
         header-text-direction="center"
         body-text-direction="center"
@@ -147,6 +162,8 @@ import { useRoute } from 'vue-router'
   const densityLoading = ref(false)
   const duplicateLoading = ref(false)
   const missingLoading = ref(false)
+  const cleanLoading = ref(false)
+  const airioCleanData = ref([])
 
   //alert
   const modalActive = ref(false)
@@ -178,7 +195,7 @@ import { useRoute } from 'vue-router'
   const masterDataStore = useMasterDataStore()
   const { floors, trays, witDevices } = storeToRefs(useMasterDataStore())
   const dataStore = useDataStore()
-  const { airioDataDensity, airioRebootCounter, airioRebootDetail, airioDuplicateData, airioMissingData } = storeToRefs(useDataStore())
+  const { airioDataDensity, airioRebootCounter, airioRebootDetail, airioDuplicateData, airioMissingData, airioRawDataDensity, airioRawDuplicateData } = storeToRefs(useDataStore())
 
   onMounted( async () => {
     await masterDataStore.getAirioFloors()
@@ -208,6 +225,7 @@ import { useRoute } from 'vue-router'
       rebootLoading.value = true
       densityLoading.value = true
       duplicateLoading.value = true
+      cleanLoading.value = true
       missingLoading.value = true
       await dataStore.getAirioRebootCounter(params)
       rebootLoading.value = false
@@ -217,6 +235,9 @@ import { useRoute } from 'vue-router'
       duplicateLoading.value = false
       await dataStore.getAirioMissingData(params)
       missingLoading.value = false
+      await dataStore.getAirioCleanData(params)
+      airioCleanData.value = await calculateCleanData(airioRawDataDensity.value, airioRawDuplicateData.value)
+      cleanLoading.value = false
       loading.value = false
     } else {
       alertMessage.value = 'Please select time, floor, tray, device first'
@@ -226,6 +247,19 @@ import { useRoute } from 'vue-router'
     }
   }
 
+  async function calculateCleanData(density, duplicate) {
+    const newArray = density.map((item1, index) => {
+      const item2 = duplicate[index] 
+        return {
+          _time: new Date (item1._time).toLocaleString(),
+          RunMesin: (item1.RunMesin - item2.runMesin) + ' (' + (((item1.RunMesin - item2.runMesin)/720)*100).toFixed(1) + '%)',
+          RPM: (item1.RPM - item2.rpm) + ' (' + (((item1.RPM - item2.rpm)/720)*100).toFixed(1) + '%)',
+          InputBarang: (item1.InputBarang - item2.inputBarang) + ' (' + (((item1.InputBarang - item2.inputBarang)/720)*100).toFixed(1) + '%)',
+          OutputBarang: (item1.OutputBarang - item2.outputBarang) + ' (' + (((item1.OutputBarang - item2.outputBarang)/720)*100).toFixed(1) + '%)',
+        }
+    })
+    return newArray
+  }
   const dataDensitySearchValue = ref('')
   const rebootDetailSearchValue = ref('')
   const dataDensityHeader = [

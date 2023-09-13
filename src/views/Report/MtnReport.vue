@@ -87,7 +87,7 @@
         >
       </EasyDataTable>
     </div>
-    <div class="table-wrap">
+    <div class="table-wrap mb-10">
       <div class="table-header">
         <h1 class="title font-light"> Data Duplicate</h1>
       </div>
@@ -96,6 +96,21 @@
         :loading="duplicateLoading"
         :headers="duplicateHeader"
         :items="duplicateData"
+        theme-color="#1363df"        
+        header-text-direction="center"
+        body-text-direction="center"
+        >
+      </EasyDataTable>
+    </div>
+    <div class="table-wrap">
+      <div class="table-header">
+        <h1 class="title font-light"> Data Clean</h1>
+      </div>
+      <EasyDataTable
+        table-class-name="customize-table"
+        :loading="cleanLoading"
+        :headers="dataDensityHeader"
+        :items="cleanData"
         theme-color="#1363df"        
         header-text-direction="center"
         body-text-direction="center"
@@ -133,6 +148,8 @@ import { useLocalStorage } from "@vueuse/core"
   const rebootLoading = ref(false)
   const densityLoading = ref(false)
   const duplicateLoading = ref(false)
+  const cleanLoading = ref(false)
+  const cleanData = ref([])
   //alert
   const modalActive = ref(false)
   const alertMessage = ref('')
@@ -162,7 +179,7 @@ import { useLocalStorage } from "@vueuse/core"
   const masterDataStore = useMasterDataStore()
   const { floors, trays, mtnDevices, mtnDevicesList } = storeToRefs(useMasterDataStore())
   const dataStore = useDataStore()
-  const { dataDensity, rebootCounter, rebootDetail, duplicateData } = storeToRefs(useDataStore())
+  const { dataDensity, rebootCounter, rebootDetail, duplicateData, rawDataDensity, rawDuplicateData} = storeToRefs(useDataStore())
 
   onMounted( async () => {
     await masterDataStore.getFloors()
@@ -190,19 +207,39 @@ import { useLocalStorage } from "@vueuse/core"
       rebootLoading.value = true
       densityLoading.value = true
       duplicateLoading.value = true
+      cleanLoading.value = true
       await dataStore.getRebootCounter(params)
       rebootLoading.value = false
       await dataStore.getDataDensity(params)
       densityLoading.value = false
       await dataStore.getDuplicate(params)
       duplicateLoading.value = false
+      await dataStore.getCleanData(params)
+      cleanData.value = await calculateCleanData(rawDataDensity.value, rawDuplicateData.value)
+      cleanLoading.value = false
       loading.value = false
+
     } else {
       alertMessage.value = 'Please select time, floor, tray, device first'
       isError.value = true
       modalActive.value = true
       setTimeout(closeNotification, 3000)
     }
+  }
+
+  async function calculateCleanData(density, duplicate) {
+    const newArray = density.map((item1, index) => {
+      const item2 = duplicate[index] 
+        return {
+          _time: new Date (item1._time).toLocaleString(),
+          PowerMesin: (item1.PowerMesin - item2.powerMesin) + ' (' + (((item1.PowerMesin - item2.powerMesin)/720)*100).toFixed(1) + '%)',
+          RunMesin: (item1.RunMesin - item2.runMesin) + ' (' + (((item1.RunMesin - item2.runMesin)/720)*100).toFixed(1) + '%)',
+          RPM: (item1.RPM - item2.rpm) + ' (' + (((item1.RPM - item2.rpm)/720)*100).toFixed(1) + '%)',
+          InputBarang: (item1.InputBarang - item2.inputBarang) + ' (' + (((item1.InputBarang - item2.inputBarang)/720)*100).toFixed(1) + '%)',
+          OutputBarang: (item1.OutputBarang - item2.outputBarang) + ' (' + (((item1.OutputBarang - item2.outputBarang)/720)*100).toFixed(1) + '%)',
+        }
+    })
+    return newArray
   }
 
   const dataDensitySearchValue = ref('')
